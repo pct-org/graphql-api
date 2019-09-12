@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
-import { Movie } from '@pct-org/mongo-models/dist/movie/movie'
+import { Movie } from '@pct-org/mongo-models'
 
 import { MoviesArgs } from './dto/movies.args'
 

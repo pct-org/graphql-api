@@ -1,8 +1,8 @@
 import { NotFoundException } from '@nestjs/common'
 import { Args, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql'
 
-import { Movie } from '@pct-org/mongo-models/dist/movie/movie'
-import { Images } from '@pct-org/mongo-models/dist/object-types/images.object-type.js'
+import { Movie } from '@pct-org/mongo-models'
+import { Images } from '@pct-org/mongo-models'
 
 import { MoviesArgs } from './dto/movies.args'
 import { MoviesService } from './movies.service'
