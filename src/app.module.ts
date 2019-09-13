@@ -2,19 +2,24 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { ConfigModule } from './config/config.module'
-import { ConfigService } from './config/config.service'
+import { ConfigModule } from './shared/config/config.module'
+import { ConfigService } from './shared/config/config.service'
+import { ModelsModule } from './shared/models/models.module'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-
+import { StatusModule } from './status/status.module'
 import { MoviesModule } from './movies/movies.module'
+import { BookmarksModule } from './bookmarks/bookmarks.module'
 
 @Module({
   imports: [
-    MoviesModule,
+    StatusModule,
+    ModelsModule,
+    ConfigModule,
 
-    // Enable
+    MoviesModule,
+    BookmarksModule,
+
+    // Enable Mongoose
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -34,9 +39,7 @@ import { MoviesModule } from './movies/movies.module'
       installSubscriptionHandlers: true,
       autoSchemaFile: 'schema.gql'
     })
-  ],
-  controllers: [AppController],
-  providers: [AppService]
+  ]
 })
 export class AppModule {
 }

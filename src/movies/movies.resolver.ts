@@ -17,11 +17,11 @@ export class MoviesResolver {
     return this.moviesService.findAll(moviesArgs)
   }
 
-  @ResolveProperty(type => Images)
-  async images(@Parent() movie) {
-
-    return {
-      logo: 'test'
-    }
-  }
+  // @ResolveProperty(type => Images)
+  // async images(@Parent() movie) {
+  //
+  //   return {
+  //     logo: 'test'
+  //   }
+  // }
 }

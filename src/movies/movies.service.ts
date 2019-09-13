@@ -17,17 +17,30 @@ export class MoviesService {
 
   async findAll(moviesArgs: MoviesArgs): Promise<Movie[]> {
     return this.movieModel.find(
-      this.getSorting(moviesArgs),
+      this.getQuery(moviesArgs),
       {},
       {
         skip: moviesArgs.offset,
-        limit: moviesArgs.limit
+        limit: moviesArgs.limit,
+        sort: this.getSorting(moviesArgs)
       }
     )
   }
 
+  private getQuery(moviesArgs: MoviesArgs): Object {
+    let query = {}
+
+    if (moviesArgs.withoutBookmarks) {
+      query = {
+        bookmarked: false
+      }
+    }
+
+    return query
+  }
+
   private getSorting(moviesArgs: MoviesArgs): Object {
-    const order = 1
+    const order = -1
 
     switch (moviesArgs.sort) {
       case 'name':

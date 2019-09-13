@@ -47,7 +47,7 @@ export class ConfigService {
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-        // .valid(['development', 'production', 'test', 'provision'])
+      // .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
 
       PORT: Joi.number()
@@ -66,6 +66,9 @@ export class ConfigService {
         .default('27017'),
 
       MONGO_DATABASE: Joi.string()
+        .required(),
+
+      SCRAPER_URL: Joi.string()
         .required()
     })
 

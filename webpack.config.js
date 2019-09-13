@@ -1,7 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
-const StartServerPlugin = require('start-server-webpack-plugin')
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
@@ -27,12 +26,6 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-
-    new StartServerPlugin({
-      name: 'server.js',
-      signal: true,
-      keyboard: true,
-    }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),

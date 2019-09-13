@@ -15,6 +15,7 @@
     "start": "node dist/main.js",
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:dev": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start:watch": "node ./dist/server.js",
     "start:dev:watch": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\""
   },
   "dependencies": {
@@ -44,7 +45,6 @@
     "@types/node": "11.13.4",
     "@types/supertest": "2.0.7",
     "prettier": "1.17.0",
-    "start-server-webpack-plugin": "^2.2.5",
     "supertest": "4.0.2",
     "ts-jest": "24.0.2",
     "ts-loader": "^6.1.0",

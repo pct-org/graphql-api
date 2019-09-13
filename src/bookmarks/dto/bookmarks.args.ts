@@ -2,7 +2,7 @@ import { Max, Min } from 'class-validator'
 import { ArgsType, Field } from 'type-graphql'
 
 @ArgsType()
-export class MoviesArgs {
+export class BookmarksArgs {
 
   @Field()
   @Min(0)
@@ -14,9 +14,6 @@ export class MoviesArgs {
   limit: number = 25
 
   @Field()
-  sort: string = 'trending'
-
-  @Field()
-  withoutBookmarks: boolean = false
+  sort: string = 'desc'
 
 }
