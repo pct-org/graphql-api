@@ -8,6 +8,8 @@ import { ModelsModule } from './shared/models/models.module'
 
 import { StatusModule } from './status/status.module'
 import { MoviesModule } from './movies/movies.module'
+import { ShowsModule } from './shows/shows.module'
+import { SeasonModule } from './season/season.module'
 import { BookmarksModule } from './bookmarks/bookmarks.module'
 
 @Module({
@@ -17,6 +19,8 @@ import { BookmarksModule } from './bookmarks/bookmarks.module'
     ConfigModule,
 
     MoviesModule,
+    ShowsModule,
+    SeasonModule,
     BookmarksModule,
 
     // Enable Mongoose

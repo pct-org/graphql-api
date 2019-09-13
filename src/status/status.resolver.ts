@@ -1,5 +1,4 @@
-import { NotFoundException } from '@nestjs/common'
-import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 
 import { StatusService } from './status.service'
 import { Status } from './status.object-type'

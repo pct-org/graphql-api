@@ -11,10 +11,12 @@ import { Status } from './status.object-type'
 export class StatusService {
 
   constructor(
+    @InjectModel('Movies')
+    private readonly movieModel: Model<Movie>,
+    @InjectModel('Shows')
+    private readonly showModel: Model<Show>,
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
-    @InjectModel('Movies') private readonly movieModel: Model<Movie>,
-    @InjectModel('Shows') private readonly showModel: Model<Show>
+    private readonly configService: ConfigService
   ) {}
 
   async getStatus(): Promise<Status> {

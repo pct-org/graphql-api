@@ -2,7 +2,7 @@ import { Max, Min } from 'class-validator'
 import { ArgsType, Field } from 'type-graphql'
 
 @ArgsType()
-export class MoviesArgs {
+export class ContentArgs {
 
   @Field()
   @Min(0)
@@ -17,6 +17,9 @@ export class MoviesArgs {
   sort: string = 'trending'
 
   @Field()
-  withoutBookmarks: boolean = false
+  noBookmarks: boolean = false
+
+  @Field()
+  noWatched: boolean = false
 
 }
