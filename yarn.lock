@@ -187,10 +187,10 @@
     consola "^2.3.0"
     node-fetch "^2.3.0"
 
-"@pct-org/mongo-models@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-0.5.1.tgz#8570c408d316a8a5db157968f8ab419863af3b2c"
-  integrity sha512-G/yLzMzxF0ZekJlo82SwRPTkeCXUbKPwcHQFZop0JwObwIwqCAzU594/5nobuLa/DSKgHMtm/VTr76rXN3UhEg==
+"@pct-org/mongo-models@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-0.8.0.tgz#4dc6c004239eca9fab49f081c84612fb5104c1b9"
+  integrity sha512-ECn5jhjmOV9UwVmCvmhBNaz1GnfPGML6s+/ixHt4vMwnV60jG9yejAsIdrP+jVYu7gvRg8TVke9MDq5GrWpgMg==
   dependencies:
     graphql "^14.5.4"
     mongoose "^5.7.0"
@@ -4743,11 +4743,6 @@ ssri@^6.0.1:
   integrity sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
   dependencies:
     figgy-pudding "^3.5.1"
-
-start-server-webpack-plugin@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/start-server-webpack-plugin/-/start-server-webpack-plugin-2.2.5.tgz#4a2838759b0f36acd11b0b2f5f196f289ae29d31"
-  integrity sha512-DRCkciwCJoCFZ+wt3wWMkR1M2mpVhJbUKFXqhK3FWyIUKYb42NnocH5sMwqgo+nPNHupqNwK/v8lgfBbr2NKdg==
 
 static-extend@^0.1.1:
   version "0.1.2"
