@@ -26,22 +26,26 @@ import { BookmarksModule } from './bookmarks/bookmarks.module'
     // Enable Mongoose
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         uri: configService.databaseUri,
         useNewUrlParser: true,
         useUnifiedTopology: true
-      }),
-      inject: [ConfigService]
+      })
     }),
 
     // Enable Graphql
-    GraphQLModule.forRoot({
-      debug: true,
-      playground: true,
-      tracing: true,
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        debug: configService.isDevelopment,
+        playground: true,
+        tracing: true,
 
-      installSubscriptionHandlers: true,
-      autoSchemaFile: 'schema.gql'
+        installSubscriptionHandlers: true,
+        autoSchemaFile: 'schema.gql'
+      })
     })
   ]
 })

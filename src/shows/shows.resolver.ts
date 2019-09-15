@@ -2,7 +2,8 @@ import { Args, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql'
 
 import { Show, Season } from '@pct-org/mongo-models'
 
-import { ContentArgs } from '../shared/content/dto/content.args'
+import { ShowArgs } from './dto/show.args'
+import { ShowsArgs } from './dto/shows.args'
 import { ShowsService } from './shows.service'
 
 @Resolver(of => Show)
@@ -10,9 +11,14 @@ export class ShowsResolver {
 
   constructor(private readonly showsService: ShowsService) {}
 
-  @Query(returns => [Show])
-  shows(@Args() contentArgs: ContentArgs): Promise<Show[]> {
-    return this.showsService.findAll(contentArgs)
+  @Query(returns => Show, { description: 'Get one show by _id (imdb id)' })
+  show(@Args() showArgs: ShowArgs): Promise<Show> {
+    return this.showsService.findOne(showArgs)
+  }
+
+  @Query(returns => [Show], { description: 'Get all shows.' })
+  shows(@Args() showsArgs: ShowsArgs): Promise<Show[]> {
+    return this.showsService.findAll(showsArgs)
   }
 
   @ResolveProperty(type => [Season])

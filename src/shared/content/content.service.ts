@@ -1,8 +1,8 @@
-import { ContentArgs } from './dto/content.args'
+import { ContentsArgs } from './dto/contents.args'
 
 export abstract class ContentService {
 
-  protected getOptions(contentArgs: ContentArgs): Object {
+  protected getOptions(contentArgs: ContentsArgs): Object {
     return {
       skip: contentArgs.offset,
       limit: contentArgs.limit,
@@ -10,7 +10,7 @@ export abstract class ContentService {
     }
   }
 
-  protected getQuery(contentArgs: ContentArgs): Object {
+  protected getQuery(contentArgs: ContentsArgs): Object {
     let query = {}
 
     if (contentArgs.noBookmarks) {
@@ -19,17 +19,10 @@ export abstract class ContentService {
       }
     }
 
-    if (contentArgs.noWatched) {
-      query = {
-        ...query,
-        watched: false
-      }
-    }
-
     return query
   }
 
-  protected getSorting(contentArgs: ContentArgs): Object {
+  protected getSorting(contentArgs: ContentsArgs): Object {
     const order = -1
 
     switch (contentArgs.sort) {

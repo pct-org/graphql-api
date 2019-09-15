@@ -41,6 +41,13 @@ export class ConfigService {
   }
 
   /**
+   * Is the current env development
+   */
+  get isDevelopment(): boolean {
+    return this.get('NODE_ENV') === 'development'
+  }
+
+  /**
    * Ensures all needed variables are set, and returns the validated JavaScript object
    * including the applied default values.
    */
