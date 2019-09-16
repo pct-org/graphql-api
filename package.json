@@ -15,8 +15,8 @@
     "start": "node dist/main.js",
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:dev": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:watch": "node ./dist/server.js",
-    "start:dev:watch": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\""
+    "start:dev:watch": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start:watch": "node ./dist/server.js"
   },
   "dependencies": {
     "@hapi/joi": "^16.0.0",
@@ -26,7 +26,7 @@
     "@nestjs/mongoose": "^6.1.2",
     "@nestjs/platform-express": "^6.0.0",
     "@nestjs/platform-fastify": "^6.6.7",
-    "@pct-org/mongo-models": "^0.8.0",
+    "@pct-org/mongo-models": "^0.9.1",
     "apollo-server-fastify": "^2.9.3",
     "dotenv": "^8.1.0",
     "graphql": "^14.5.4",
@@ -37,6 +37,8 @@
     "type-graphql": "^0.17.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
     "@nestjs/testing": "^6.0.0",
     "@types/dotenv": "^6.1.1",
     "@types/express": "4.16.1",
@@ -44,6 +46,7 @@
     "@types/jest": "24.0.11",
     "@types/node": "11.13.4",
     "@types/supertest": "2.0.7",
+    "husky": "^3.0.5",
     "prettier": "1.17.0",
     "supertest": "4.0.2",
     "ts-jest": "24.0.2",
