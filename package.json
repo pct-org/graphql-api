@@ -26,15 +26,19 @@
     "@nestjs/mongoose": "^6.1.2",
     "@nestjs/platform-express": "^6.0.0",
     "@nestjs/platform-fastify": "^6.6.7",
+    "@nestjs/serve-static": "^1.0.1",
     "@pct-org/mongo-models": "^0.9.1",
     "apollo-server-fastify": "^2.9.3",
     "dotenv": "^8.1.0",
+    "fastify-static": "^2.5.0",
     "graphql": "^14.5.4",
     "mongoose": "^5.7.0",
+    "p-map": "^3.0.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
-    "type-graphql": "^0.17.5"
+    "type-graphql": "^0.17.5",
+    "webtorrent-hybrid": "^4.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
@@ -46,6 +50,7 @@
     "@types/jest": "24.0.11",
     "@types/node": "11.13.4",
     "@types/supertest": "2.0.7",
+    "@types/webtorrent": "^0.107.0",
     "husky": "^3.0.5",
     "prettier": "1.17.0",
     "supertest": "4.0.2",

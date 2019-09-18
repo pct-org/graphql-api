@@ -38,7 +38,7 @@ export abstract class ContentService {
 
       case 'released':
         return {
-          latest_episode: order,
+          latestEpisode: order,
           released: order
         }
 

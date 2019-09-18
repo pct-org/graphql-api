@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { movieSchema, showSchema, seasonSchema, episodeSchema } from '@pct-org/mongo-models'
+import { movieSchema, showSchema, seasonSchema, episodeSchema, downloadSchema } from '@pct-org/mongo-models'
 
 @Global()
 @Module({
@@ -9,13 +9,15 @@ import { movieSchema, showSchema, seasonSchema, episodeSchema } from '@pct-org/m
     MongooseModule.forFeature([{ name: 'Movies', schema: movieSchema }]),
     MongooseModule.forFeature([{ name: 'Shows', schema: showSchema }]),
     MongooseModule.forFeature([{ name: 'Seasons', schema: seasonSchema }]),
-    MongooseModule.forFeature([{ name: 'Episodes', schema: episodeSchema }])
+    MongooseModule.forFeature([{ name: 'Episodes', schema: episodeSchema }]),
+    MongooseModule.forFeature([{ name: 'Downloads', schema: downloadSchema }])
   ],
   exports: [
     MongooseModule.forFeature([{ name: 'Movies', schema: movieSchema }]),
     MongooseModule.forFeature([{ name: 'Shows', schema: showSchema }]),
     MongooseModule.forFeature([{ name: 'Seasons', schema: seasonSchema }]),
-    MongooseModule.forFeature([{ name: 'Episodes', schema: episodeSchema }])
+    MongooseModule.forFeature([{ name: 'Episodes', schema: episodeSchema }]),
+    MongooseModule.forFeature([{ name: 'Downloads', schema: downloadSchema }])
   ]
 })
 export class ModelsModule {

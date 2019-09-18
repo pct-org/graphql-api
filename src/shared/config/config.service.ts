@@ -15,7 +15,6 @@ export class ConfigService {
     const config = dotenv.parse(fs.readFileSync('.env'))
 
     this.envConfig = this.validateInput(config)
-
   }
 
   /**
@@ -76,6 +75,9 @@ export class ConfigService {
         .required(),
 
       SCRAPER_URL: Joi.string()
+        .required(),
+
+      DOWNLOAD_LOCATION: Joi.string()
         .required()
     })
 

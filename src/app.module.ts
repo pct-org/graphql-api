@@ -11,6 +11,7 @@ import { MoviesModule } from './movies/movies.module'
 import { ShowsModule } from './shows/shows.module'
 import { SeasonModule } from './season/season.module'
 import { BookmarksModule } from './bookmarks/bookmarks.module'
+import { DownloadsModule } from './downloads/downloads.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module'
     ShowsModule,
     SeasonModule,
     BookmarksModule,
+    DownloadsModule,
 
     // Enable Mongoose
     MongooseModule.forRootAsync({
@@ -46,7 +48,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module'
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql'
       })
-    })
+    }),
   ]
 })
 export class AppModule {
