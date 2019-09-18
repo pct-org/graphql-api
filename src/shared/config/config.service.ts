@@ -9,6 +9,16 @@ export interface EnvConfig {
 
 export class ConfigService {
 
+  public static readonly NODE_ENV: string = 'NODE_ENV'
+  public static readonly PORT: string = 'PORT'
+  public static readonly MONGO_USER: string = 'MONGO_USER'
+  public static readonly MONGO_PASS: string = 'MONGO_PASS'
+  public static readonly MONGO_URI: string = 'MONGO_URI'
+  public static readonly MONGO_PORT: string = 'MONGO_PORT'
+  public static readonly MONGO_DATABASE: string = 'MONGO_DATABASE'
+  public static readonly SCRAPER_URL: string = 'SCRAPER_URL'
+  public static readonly DOWNLOAD_LOCATION: string = 'DOWNLOAD_LOCATION'
+
   private readonly envConfig: { [key: string]: string }
 
   constructor() {
@@ -52,32 +62,32 @@ export class ConfigService {
    */
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
-      NODE_ENV: Joi.string()
+      [ConfigService.NODE_ENV]: Joi.string()
       // .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
 
-      PORT: Joi.number()
+      [ConfigService.PORT]: Joi.number()
         .default(3000),
 
-      MONGO_USER: Joi.string()
+      [ConfigService.MONGO_USER]: Joi.string()
         .optional(),
 
-      MONGO_PASS: Joi.string()
+      [ConfigService.MONGO_PASS]: Joi.string()
         .optional(),
 
-      MONGO_URI: Joi.string()
+      [ConfigService.MONGO_URI]: Joi.string()
         .default('127.0.0.1'),
 
-      MONGO_PORT: Joi.number()
+      [ConfigService.MONGO_PORT]: Joi.number()
         .default('27017'),
 
-      MONGO_DATABASE: Joi.string()
+      [ConfigService.MONGO_DATABASE]: Joi.string()
         .required(),
 
-      SCRAPER_URL: Joi.string()
+      [ConfigService.SCRAPER_URL]: Joi.string()
         .required(),
 
-      DOWNLOAD_LOCATION: Joi.string()
+      [ConfigService.DOWNLOAD_LOCATION]: Joi.string()
         .required()
     })
 

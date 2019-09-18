@@ -13,17 +13,23 @@ import { SeasonModule } from './season/season.module'
 import { BookmarksModule } from './bookmarks/bookmarks.module'
 import { DownloadsModule } from './downloads/downloads.module'
 
+import { WatchModule } from './watch/watch.module'
+
 @Module({
   imports: [
     StatusModule,
     ModelsModule,
     ConfigModule,
 
+    // GraphQL
     MoviesModule,
     ShowsModule,
     SeasonModule,
     BookmarksModule,
     DownloadsModule,
+
+    // Rest
+    WatchModule,
 
     // Enable Mongoose
     MongooseModule.forRootAsync({
@@ -48,7 +54,7 @@ import { DownloadsModule } from './downloads/downloads.module'
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql'
       })
-    }),
+    })
   ]
 })
 export class AppModule {
