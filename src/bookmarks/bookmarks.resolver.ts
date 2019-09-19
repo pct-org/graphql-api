@@ -19,13 +19,29 @@ export class BookmarksResolver {
   }
 
   @Mutation(returns => Content)
-  addBookmark(@Args('data') newBookmarkData: NewBookmarkInput): Promise<Content> {
-    return this.bookmarksService.updateBookmark(newBookmarkData, true)
+  addBookmark(
+    @Args('_id') _id: string,
+    @Args('type') type: string
+  ): Promise<Content> {
+    return this.bookmarksService.updateBookmark({
+        _id,
+        type
+      },
+      true
+    )
   }
 
   @Mutation(returns => Content)
-  removeBookmark(@Args('data') newBookmarkData: NewBookmarkInput): Promise<Content> {
-    return this.bookmarksService.updateBookmark(newBookmarkData, false)
+  removeBookmark(
+    @Args('_id') _id: string,
+    @Args('type') type: string
+  ): Promise<Content> {
+    return this.bookmarksService.updateBookmark({
+        _id,
+        type
+      },
+      false
+    )
   }
 
 }

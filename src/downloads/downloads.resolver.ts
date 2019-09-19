@@ -7,10 +7,15 @@ import { DownloadArgs } from './dto/download.args'
 import { NewDownloadInput } from './dto/new-download.input'
 import { DownloadsService } from './downloads.service'
 
+import { TorrentService } from '../shared/services/torrent.service'
+
 @Resolver(of => Download)
 export class DownloadsResolver {
 
-  constructor(private readonly downloadsService: DownloadsService) {}
+  constructor(
+    private readonly downloadsService: DownloadsService,
+    private readonly torrentService: TorrentService
+  ) {}
 
   @Query(returns => [Download], { description: 'Get all downloads.' })
   downloads(@Args() downloadsArgs: DownloadsArgs): Promise<Download[]> {
@@ -23,10 +28,55 @@ export class DownloadsResolver {
   }
 
   @Mutation(returns => Download)
-  startDownload(@Args('data') newDownloadData: NewDownloadInput): Promise<Download> {
-    return this.downloadsService.addOne(newDownloadData)
+  startDownload(
+    @Args('_id') _id: string,
+    @Args('type') type: string,
+    @Args('quality') quality: string
+  ): Promise<Download> {
+    return this.downloadsService.addOne({
+      _id,
+      type,
+      quality
+    })
   }
 
+  @Mutation(returns => Download)
+  async startStream(
+    @Args('_id') _id: string,
+    @Args('type') type: string,
+    @Args('quality') quality: string
+  ): Promise<Download> {
+    let download = await this.download({ _id })
+
+    if (!download) {
+      download = await this.startDownload(_id, type, quality)
+    }
+
+    if (download.status !== TorrentService.STATUS_DOWNLOADING) {
+      this.torrentService.startStreaming(download)
+    }
+
+    return download
+  }
+
+  @Mutation(returns => Download)
+  async stopStream(
+    @Args('_id') _id: string,
+    @Args('type') type: string,
+    @Args('quality') quality: string
+  ): Promise<Download> {
+    let download = await this.download({ _id })
+
+    if (!download) {
+      download = await this.startDownload(_id, type, quality)
+    }
+
+    if (download.status === TorrentService.STATUS_DOWNLOADING) {
+      this.torrentService.startStreaming(download)
+    }
+
+    return download
+  }
 
   @ResolveProperty(type => Movie)
   movie(@Parent() download) {

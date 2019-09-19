@@ -5,7 +5,7 @@ import * as pMap from 'p-map'
 import * as WebTorrent from 'webtorrent-hybrid'
 
 import { Episode, Movie, Download } from '@pct-org/mongo-models'
-import { ConfigService } from '../shared/config/config.service'
+import { ConfigService } from '../config/config.service'
 
 @Injectable()
 export class TorrentService {
@@ -63,6 +63,18 @@ export class TorrentService {
     this.stream = stream
 
     this.download(stream)
+  }
+
+  /**
+   * Starts the streaming process of one item
+   *
+   * @param stream
+   */
+  public stopStreaming(stream: Download) {
+    if (this.stream._id === stream._id) {
+      // TODO:: Cancel the download
+      this.stream = null
+    }
   }
 
   /**
@@ -131,6 +143,10 @@ export class TorrentService {
 
       // Check if we have a magnet to be sure
       if (magnet) {
+        // Update item that we are downloading
+        item.downloading = true
+        item.save()
+
         // Update the status to connecting
         await this.updateOne(download, {
           status: TorrentService.STATUS_CONNECTING
@@ -142,7 +158,7 @@ export class TorrentService {
             // Add a unique download location for this item
             path: `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
           },
-          this.handleTorrent(resolve, reject, download)
+          this.handleTorrent(resolve, reject, item, download)
         )
 
       } else {
@@ -150,6 +166,9 @@ export class TorrentService {
         await this.updateOne(download, {
           status: TorrentService.STATUS_FAILED
         })
+
+        item.downloading = false
+        item.save()
 
         // Resolve instead of reject as no try catch is around the method
         resolve()
@@ -162,13 +181,17 @@ export class TorrentService {
    *
    * @param resolve
    * @param reject
+   * @param item
    * @param download
    */
-  private handleTorrent(resolve, reject, download) {
+  private handleTorrent(resolve, reject, item, download) {
     return (torrent) => {
       // Update the progress every 1 second
       let interval = setInterval(() => {
         console.log(`[${download._id}] Progress: ${(torrent.progress * 100).toFixed(1)}% at ${torrent.downloadSpeed} down and ${torrent.uploadSpeed} up`)
+
+        // TODO:: Make some kind of check
+        // That when the up and down is 0 from the start we scale to a other quality
 
         // Update the item
         this.updateOne(download, {
@@ -185,6 +208,11 @@ export class TorrentService {
           progress: 100,
           status: TorrentService.STATUS_COMPLETE
         })
+
+        item.downloading = false
+        item.downloaded = true
+        item.downloadedOn = Number(new Date())
+        item.save()
 
         resolve()
       })

@@ -41,7 +41,7 @@ export class BookmarksService {
     return [
       ...movies,
       ...shows
-    ]
+    ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
   }
 
   /**
@@ -57,7 +57,7 @@ export class BookmarksService {
         : this.showModel
 
     ).findByIdAndUpdate(
-      addBookmarksArgs.imdbId,
+      addBookmarksArgs._id,
       {
         bookmarked: add,
         bookmarkedOn: add
