@@ -14,7 +14,7 @@ export class DownloadsService {
   constructor(
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>,
-    @InjectModel('Downloads') private readonly downloadModel: Model<Download>,
+    @InjectModel('Downloads') private readonly downloadModel: Model<Download>
   ) {}
 
   /**
@@ -23,6 +23,7 @@ export class DownloadsService {
   addOne(newDownloadData: NewDownloadInput): Promise<Download> {
     return new this.downloadModel({
       ...newDownloadData,
+      variant: newDownloadData.variant || 'download',
       status: TorrentService.STATUS_QUEUED,
       progress: 0,
       createdAt: Number(new Date()),

@@ -31,18 +31,26 @@ export class DownloadsResolver {
   }
 
   @Mutation(returns => Download)
-  startDownload(
+  async startDownload(
     @Args('_id') _id: string,
     @Args('variant') variant: string,
     @Args('quality') quality: string,
     @Args({ name: 'type', defaultValue: 'download', type: () => String }) type: string
   ): Promise<Download> {
-    return this.downloadsService.addOne({
+    const download = await this.downloadsService.addOne({
       _id,
       type,
       variant,
       quality
     })
+
+    // Add the download to the queue
+    this.torrentService.addDownload(download)
+
+    // Start the queue
+    this.torrentService.startDownloads()
+
+    return download
   }
 
   @Mutation(returns => Download)
@@ -57,11 +65,11 @@ export class DownloadsResolver {
       download = await this.startDownload(_id, variant, quality, 'stream')
     }
 
-    // if (download.status !== TorrentService.STATUS_DOWNLOADING
-    //   && download.status !== TorrentService.STATUS_COMPLETE
-    // ) {
-    this.torrentService.startStreaming(download)
-    // }
+    if (download.status !== TorrentService.STATUS_DOWNLOADING
+      && download.status !== TorrentService.STATUS_COMPLETE
+    ) {
+      this.torrentService.startStreaming(download)
+    }
 
     return download
   }

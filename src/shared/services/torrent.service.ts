@@ -5,6 +5,7 @@ import * as pMap from 'p-map'
 import * as WebTorrent from 'webtorrent-hybrid'
 import { Torrent, Instance as WebTorrentInstance } from 'webtorrent'
 import { Episode, Movie, Download } from '@pct-org/mongo-models'
+import * as rimraf from 'rimraf'
 
 import { ConfigService } from '../config/config.service'
 import { formatKbToString } from '../utils'
@@ -35,11 +36,6 @@ export class TorrentService {
    * Are we currently downloading in the background
    */
   private backgroundDownloading: Boolean = false
-
-  /**
-   * Download that will be streamed to the user
-   */
-  private streams: Download[] = []
 
   /**
    * Items currently downloading
@@ -83,8 +79,6 @@ export class TorrentService {
    * @param download
    */
   public stopStreaming(download: Download): Promise<any> {
-    this.logger.log(`[${download._id}]: Stop streaming`)
-
     return new Promise((resolve) => {
       // Get the stream
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
@@ -92,6 +86,8 @@ export class TorrentService {
       if (!downloadingTorrent) {
         return resolve()
       }
+
+      this.logger.log(`[${download._id}]: Stop streaming`)
 
       // Destroy the torrent
       downloadingTorrent.torrent.destroy((err) => {
@@ -106,6 +102,15 @@ export class TorrentService {
         resolve()
       })
     })
+  }
+
+  /**
+   * Adds a download to the queued items
+   */
+  public addDownload(download: Download) {
+    this.logger.log(`[${download._id}]]: Added to queue`)
+
+    this.downloads.push(download)
   }
 
   /**
@@ -231,24 +236,21 @@ export class TorrentService {
       torrent.on('download', async () => {
         const newProgress = torrent.progress * 100
 
-        this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
+        // Only update every 0.2 %
+        if (lastUpdateProgress === null || (lastUpdateProgress + 0.2) < newProgress) {
+          this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
 
-        if (lastUpdateProgress === null || (lastUpdateProgress + 1) < newProgress) {
           lastUpdateProgress = newProgress
 
           // Update the item
           this.updateOne(download, {
-            progress: (torrent.progress * 100).toFixed(1),
+            progress: newProgress.toFixed(1),
             status: TorrentService.STATUS_DOWNLOADING,
             timeRemaining: torrent.timeRemaining,
             speed: torrent.downloadSpeed,
             numPeers: torrent.numPeers
           })
         }
-      })
-
-      torrent.on('error', (error) => {
-        console.log('TORRENT ERROR', error)
       })
 
       torrent.on('done', async () => {
@@ -299,7 +301,25 @@ export class TorrentService {
   /**
    * Removes a download from torrents
    */
-  private removeFromTorrents(download: Download) {
-    this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+  private removeFromTorrents(download: Model<Download>) {
+    this.torrents = this.torrents.filter((tor) => {
+      if (tor._id !== download._id) {
+        return true
+      }
+
+      if (download.type === 'stream') {
+        // Delete the download
+        download.delete()
+
+        // Remove the download folder
+        rimraf(`${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`, (error) => {
+          if (error) {
+            this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+          }
+        })
+      }
+
+      return false
+    })
   }
 }
