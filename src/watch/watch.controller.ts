@@ -15,6 +15,9 @@ export class WatchController {
     @Res() res,
     @Req() req
   ) {
+    // TODO:: https://github.com/webtorrent/webtorrent/blob/master/docs/api.md#torrentcreateserveropts
+    // Also support when it's a stream ^^^^^^^^^^^^^^
+
     // Get all the files for this item
     const files = fs.readdirSync(
       path.resolve(

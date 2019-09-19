@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import * as pMap from 'p-map'
 import * as WebTorrent from 'webtorrent-hybrid'
-
+import { Torrent, Instance as WebTorrentInstance } from 'webtorrent'
 import { Episode, Movie, Download } from '@pct-org/mongo-models'
+
 import { ConfigService } from '../config/config.service'
+import { formatKbToString } from '../utils'
+import { TorrentInterface } from './torrent.interface'
 
 @Injectable()
 export class TorrentService {
@@ -15,6 +18,8 @@ export class TorrentService {
   public static STATUS_CONNECTING = 'connecting'
   public static STATUS_COMPLETE = 'complete'
   public static STATUS_FAILED = 'failed'
+
+  private readonly logger = new Logger(TorrentService.name)
 
   /**
    * Maximum of concurrent downloads in the background
@@ -34,12 +39,17 @@ export class TorrentService {
   /**
    * Download that will be streamed to the user
    */
-  private stream: Download = null
+  private streams: Download[] = []
+
+  /**
+   * Items currently downloading
+   */
+  private torrents: TorrentInterface[] = []
 
   /**
    * WebTorrent engine
    */
-  private webTorrent: WebTorrent = null
+  private webTorrent: WebTorrentInstance = null
 
   constructor(
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
@@ -48,7 +58,9 @@ export class TorrentService {
     private readonly configService: ConfigService
   ) {
     this.webTorrent = new WebTorrent({ maxConns: 20 })
-    this.webTorrent.on('error', console.log)
+    this.webTorrent.on('error', (error) => {
+      this.logger.error(`[webTorrent]: ${JSON.stringify(error)}`)
+    })
 
     // Check for incomplete downloads and add them to the downloads
     this.checkForIncompleteDownloads()
@@ -57,24 +69,43 @@ export class TorrentService {
   /**
    * Starts the streaming process of one item
    *
-   * @param stream
+   * @param download
    */
-  public startStreaming(stream: Download) {
-    this.stream = stream
+  public startStreaming(download: Model<Download>) {
+    this.logger.log(`[${download._id}]: Start streaming`)
 
-    this.download(stream)
+    this.download(download)
   }
 
   /**
    * Starts the streaming process of one item
    *
-   * @param stream
+   * @param download
    */
-  public stopStreaming(stream: Download) {
-    if (this.stream._id === stream._id) {
-      // TODO:: Cancel the download
-      this.stream = null
-    }
+  public stopStreaming(download: Download): Promise<any> {
+    this.logger.log(`[${download._id}]: Stop streaming`)
+
+    return new Promise((resolve) => {
+      // Get the stream
+      const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
+
+      if (!downloadingTorrent) {
+        return resolve()
+      }
+
+      // Destroy the torrent
+      downloadingTorrent.torrent.destroy((err) => {
+        if (err) {
+          this.logger.error(`[${download._id}]: Error stopping download`, err.toString())
+        }
+
+        this.logger.log(`[${download._id}]: Stopped download`)
+
+        this.removeFromTorrents(download)
+
+        resolve()
+      })
+    })
   }
 
   /**
@@ -84,6 +115,8 @@ export class TorrentService {
     if (this.backgroundDownloading || this.downloads.length === 0) {
       return
     }
+
+    this.logger.log(`Start queued downloads`)
 
     // Enable that we are downloading
     this.backgroundDownloading = true
@@ -114,11 +147,7 @@ export class TorrentService {
       }
     })
 
-    console.log(this.downloads)
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
+    this.logger.log(`Found ${this.downloads.length} downloads`)
 
     // this.startDownloads()
   }
@@ -129,7 +158,9 @@ export class TorrentService {
    * @param {Download} download - Item to download
    */
   private async download(download: Download) {
-    return new Promise((async (resolve, reject) => {
+    return new Promise((async (resolve) => {
+      this.logger.log(`[${download._id}]: Start download`)
+
       const item = await (
         download.type === 'movie'
           ? this.movieModel
@@ -142,26 +173,9 @@ export class TorrentService {
       const magnet = torrents.find(torrent => torrent.quality === download.quality)
 
       // Check if we have a magnet to be sure
-      if (magnet) {
-        // Update item that we are downloading
-        item.downloading = true
-        item.save()
+      if (!magnet) {
+        // TODO:: Download then a different quality?
 
-        // Update the status to connecting
-        await this.updateOne(download, {
-          status: TorrentService.STATUS_CONNECTING
-        })
-
-        this.webTorrent.add(
-          magnet.url,
-          {
-            // Add a unique download location for this item
-            path: `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
-          },
-          this.handleTorrent(resolve, reject, item, download)
-        )
-
-      } else {
         // No magnet found, update status to failed
         await this.updateOne(download, {
           status: TorrentService.STATUS_FAILED
@@ -171,8 +185,29 @@ export class TorrentService {
         item.save()
 
         // Resolve instead of reject as no try catch is around the method
-        resolve()
+        return resolve()
       }
+
+      // Update item that we are downloading
+      item.downloading = true
+      item.save()
+
+      // Update the status to connecting
+      await this.updateOne(download, {
+        status: TorrentService.STATUS_CONNECTING,
+        timeRemaining: null,
+        speed: null,
+        numPeers: null
+      })
+
+      this.webTorrent.add(
+        magnet.url,
+        {
+          // Add a unique download location for this item
+          path: `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
+        },
+        this.handleTorrent(resolve, item, download, magnet)
+      )
     }))
   }
 
@@ -180,34 +215,60 @@ export class TorrentService {
    * Handles the torrent and resolves when the torrent is done
    *
    * @param resolve
-   * @param reject
    * @param item
    * @param download
+   * @param magnet
    */
-  private handleTorrent(resolve, reject, item, download) {
-    return (torrent) => {
-      // Update the progress every 1 second
-      let interval = setInterval(() => {
-        console.log(`[${download._id}] Progress: ${(torrent.progress * 100).toFixed(1)}% at ${torrent.downloadSpeed} down and ${torrent.uploadSpeed} up`)
+  private handleTorrent(resolve, item, download, magnet) {
+    return (torrent: Torrent) => {
+      this.torrents.push({
+        _id: download._id,
+        torrent
+      })
 
-        // TODO:: Make some kind of check
-        // That when the up and down is 0 from the start we scale to a other quality
+      let lastUpdateProgress = null
 
-        // Update the item
-        this.updateOne(download, {
-          progress: (torrent.progress * 100).toFixed(1),
-          status: TorrentService.STATUS_DOWNLOADING
-        })
-      }, 1000)
+      torrent.on('download', async () => {
+        const newProgress = torrent.progress * 100
+
+        this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
+
+        if (lastUpdateProgress === null || (lastUpdateProgress + 1) < newProgress) {
+          lastUpdateProgress = newProgress
+
+          // Update the item
+          this.updateOne(download, {
+            progress: (torrent.progress * 100).toFixed(1),
+            status: TorrentService.STATUS_DOWNLOADING,
+            timeRemaining: torrent.timeRemaining,
+            speed: torrent.downloadSpeed,
+            numPeers: torrent.numPeers
+          })
+        }
+      })
+
+      torrent.on('error', (error) => {
+        console.log('TORRENT ERROR', error)
+      })
 
       torrent.on('done', async () => {
-        // Clear the interval
-        clearInterval(interval)
+        this.logger.log(`[${download._id}]: Download complete`)
+
+        // Remove from torrents
+        this.removeFromTorrents(download)
 
         await this.updateOne(download, {
           progress: 100,
-          status: TorrentService.STATUS_COMPLETE
+          status: TorrentService.STATUS_COMPLETE,
+          timeRemaining: null,
+          speed: null,
+          numPeers: null
         })
+
+        // Remove the magnet from the client
+        this.webTorrent.remove(
+          magnet.url
+        )
 
         item.downloading = false
         item.downloaded = true
@@ -235,4 +296,10 @@ export class TorrentService {
     return download.save()
   }
 
+  /**
+   * Removes a download from torrents
+   */
+  private removeFromTorrents(download: Download) {
+    this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+  }
 }

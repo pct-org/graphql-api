@@ -1,3 +1,4 @@
+import { LogLevel } from '@nestjs/common'
 import * as dotenv from 'dotenv'
 import * as Joi from '@hapi/joi'
 
@@ -44,8 +45,6 @@ export class ConfigService {
       `mongodb://${this.get('MONGO_USER')}:${this.get('MONGO_PASS')}@${this.get('MONGO_URI')}:${this.get('MONGO_PORT')}/${this.get('MONGO_DATABASE')}`
     )
 
-    console.log('databaseUri', uri.href)
-
     return uri.href
   }
 
@@ -54,6 +53,16 @@ export class ConfigService {
    */
   get isDevelopment(): boolean {
     return this.get('NODE_ENV') === 'development'
+  }
+
+  static get logLevel(): LogLevel[] {
+    const env = process.env.NODE_ENV || 'development'
+
+    if (env === 'development') {
+      return ['log', 'error', 'warn', 'debug', 'verbose']
+    }
+
+    return ['log', 'error', 'warn']
   }
 
   /**

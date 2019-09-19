@@ -16,13 +16,13 @@ export class MoviesService extends ContentService {
     super()
   }
 
-  async findOne(movieArgs: MovieArgs): Promise<Movie> {
+  findOne(movieArgs: MovieArgs): Promise<Movie> {
     return this.movieModel.findById(
-      movieArgs._id,
+      movieArgs._id
     )
   }
 
-  async findAll(moviesArgs: MoviesArgs): Promise<Movie[]> {
+  findAll(moviesArgs: MoviesArgs): Promise<Movie[]> {
     return this.movieModel.find(
       this.getQuery(moviesArgs),
       {},

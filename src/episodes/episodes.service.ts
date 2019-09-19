@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-
 import { Episode } from '@pct-org/mongo-models'
 
 @Injectable()
-export class SeasonService {
+export class EpisodesService {
 
   constructor(
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>
   ) {}
 
-  async getEpisodes(imdbId: string, seasonNumber: string): Promise<Episode[]> {
+  findOne(_id: string): Promise<Episode[]> {
+    return this.episodeModel.find(
+      {
+        _id
+      }
+    )
+  }
+
+  findAllForSeason(imdbId: string, seasonNumber: number): Promise<Episode[]> {
     return this.episodeModel.find(
       {
         showImdbId: imdbId,

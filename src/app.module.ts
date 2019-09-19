@@ -9,7 +9,7 @@ import { ModelsModule } from './shared/models/models.module'
 import { StatusModule } from './status/status.module'
 import { MoviesModule } from './movies/movies.module'
 import { ShowsModule } from './shows/shows.module'
-import { SeasonModule } from './season/season.module'
+import { SeasonsModule } from './seasons/seasons.module'
 import { BookmarksModule } from './bookmarks/bookmarks.module'
 import { DownloadsModule } from './downloads/downloads.module'
 
@@ -17,14 +17,14 @@ import { WatchModule } from './watch/watch.module'
 
 @Module({
   imports: [
-    StatusModule,
     ModelsModule,
     ConfigModule,
 
     // GraphQL
+    StatusModule,
     MoviesModule,
     ShowsModule,
-    SeasonModule,
+    SeasonsModule,
     BookmarksModule,
     DownloadsModule,
 

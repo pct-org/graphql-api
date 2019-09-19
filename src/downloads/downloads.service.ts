@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-
 import { Episode, Movie, Download } from '@pct-org/mongo-models'
 
 import { DownloadsArgs } from './dto/downloads.args'
@@ -15,10 +14,13 @@ export class DownloadsService {
   constructor(
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>,
-    @InjectModel('Downloads') private readonly downloadModel: Model<Download>
+    @InjectModel('Downloads') private readonly downloadModel: Model<Download>,
   ) {}
 
-  async addOne(newDownloadData: NewDownloadInput): Promise<Download> {
+  /**
+   * Add's one download
+   */
+  addOne(newDownloadData: NewDownloadInput): Promise<Download> {
     return new this.downloadModel({
       ...newDownloadData,
       status: TorrentService.STATUS_QUEUED,
@@ -28,13 +30,19 @@ export class DownloadsService {
     }).save()
   }
 
-  async findOne(downloadArgs: DownloadArgs): Promise<Download> {
+  /**
+   * Find one download
+   */
+  findOne(downloadArgs: DownloadArgs): Promise<Download> {
     return this.downloadModel.findById(
       downloadArgs._id
     )
   }
 
-  async findAll(downloadsArgs: DownloadsArgs): Promise<Download[]> {
+  /**
+   * Get all downloads
+   */
+  findAll(downloadsArgs: DownloadsArgs): Promise<Download[]> {
     return this.downloadModel.find(
       {},
       {},
@@ -42,18 +50,6 @@ export class DownloadsService {
         skip: downloadsArgs.offset,
         limit: downloadsArgs.limit
       }
-    )
-  }
-
-  async getMovie(_id: string): Promise<Movie> {
-    return this.movieModel.findById(
-      _id
-    )
-  }
-
-  async getEpisode(_id: string): Promise<Episode> {
-    return this.episodeModel.findById(
-      _id
     )
   }
 
