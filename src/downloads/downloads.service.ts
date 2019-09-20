@@ -23,7 +23,6 @@ export class DownloadsService {
   addOne(newDownloadData: NewDownloadInput): Promise<Download> {
     return new this.downloadModel({
       ...newDownloadData,
-      variant: newDownloadData.variant || 'download',
       status: TorrentService.STATUS_QUEUED,
       progress: 0,
       createdAt: Number(new Date()),

@@ -33,14 +33,14 @@ export class DownloadsResolver {
   @Mutation(returns => Download)
   async startDownload(
     @Args('_id') _id: string,
-    @Args('variant') variant: string,
+    @Args('itemType') itemType: string,
     @Args('quality') quality: string,
     @Args({ name: 'type', defaultValue: 'download', type: () => String }) type: string
   ): Promise<Download> {
     const download = await this.downloadsService.addOne({
       _id,
       type,
-      variant,
+      itemType,
       quality
     })
 
@@ -56,20 +56,21 @@ export class DownloadsResolver {
   @Mutation(returns => Download)
   async startStream(
     @Args('_id') _id: string,
-    @Args('variant') variant: string,
+    @Args('itemType') itemType: string,
     @Args('quality') quality: string
   ): Promise<Download> {
     let download = await this.download({ _id })
 
     if (!download) {
-      download = await this.startDownload(_id, variant, quality, 'stream')
+      download = await this.startDownload(_id, itemType, quality, 'stream')
     }
 
-    if (download.status !== TorrentService.STATUS_DOWNLOADING
-      && download.status !== TorrentService.STATUS_COMPLETE
-    ) {
-      this.torrentService.startStreaming(download)
-    }
+    // TODO:: If status is downloading, double check this in the torrentService, if not know there then ignore
+    // if (download.status !== TorrentService.STATUS_DOWNLOADING
+    // && download.status !== TorrentService.STATUS_COMPLETE
+    // ) {
+    this.torrentService.startStreaming(download)
+    // }
 
     return download
   }
@@ -92,9 +93,9 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to fetch the movie for
    */
-  @ResolveProperty(type => Movie, { description: 'The movie of this download, only if variant === "movie"' })
+  @ResolveProperty(type => Movie, { description: 'The movie of this download, only if itemType === "movie"' })
   movie(@Parent() download) {
-    if (download.variant !== 'movie') {
+    if (download.itemType !== 'movie') {
       return null
     }
 
@@ -106,9 +107,9 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to fetch the episode for
    */
-  @ResolveProperty(type => Episode, { description: 'The episode of this download, only if variant === "episode"' })
+  @ResolveProperty(type => Episode, { description: 'The episode of this download, only if itemType === "episode"' })
   episode(@Parent() download) {
-    if (download.variant !== 'episode') {
+    if (download.itemType !== 'episode') {
       return null
     }
 
@@ -121,7 +122,7 @@ export class DownloadsResolver {
    * @param {Download} download - The download to format it on
    */
   @ResolveProperty(type => String)
-  downloadSpeed(@Parent() download) {
+  speed(@Parent() download) {
     return formatKbToString(download.speed)
   }
 

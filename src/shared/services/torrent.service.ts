@@ -47,6 +47,11 @@ export class TorrentService {
    */
   private webTorrent: WebTorrentInstance = null
 
+  /**
+   * All the different supported formats
+   */
+  private supportedFormats: string[] = ['mp4', 'ogg', 'mov', 'webmv', 'mkv', 'wmv', 'avi']
+
   constructor(
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>,
@@ -97,7 +102,7 @@ export class TorrentService {
 
         this.logger.log(`[${download._id}]: Stopped download`)
 
-        this.removeFromTorrents(download)
+        this.removeFromTorrents(download, true)
 
         resolve()
       })
@@ -108,7 +113,7 @@ export class TorrentService {
    * Adds a download to the queued items
    */
   public addDownload(download: Download) {
-    this.logger.log(`[${download._id}]]: Added to queue`)
+    this.logger.log(`[${download._id}]: Added to queue`)
 
     this.downloads.push(download)
   }
@@ -179,7 +184,7 @@ export class TorrentService {
 
       // Check if we have a magnet to be sure
       if (!magnet) {
-        // TODO:: Download then a different quality?
+        // TODO:: Search for it
 
         // No magnet found, update status to failed
         await this.updateOne(download, {
@@ -187,15 +192,17 @@ export class TorrentService {
         })
 
         item.downloading = false
-        item.save()
+        await item.save()
 
         // Resolve instead of reject as no try catch is around the method
         return resolve()
+      } else {
+        // TODO:: Check health otherwise search for a better one
       }
 
       // Update item that we are downloading
       item.downloading = true
-      item.save()
+      await item.save()
 
       // Update the status to connecting
       await this.updateOne(download, {
@@ -226,21 +233,60 @@ export class TorrentService {
    */
   private handleTorrent(resolve, item, download, magnet) {
     return (torrent: Torrent) => {
+      // Let's make sure all the not needed files are deselected
+      const { file, torrentIndex } = torrent.files.reduce((previous, current, index) => {
+        const formatIsSupported = !!this.supportedFormats.find(format => current.name.includes(format))
+
+        if (formatIsSupported) {
+          if (current.length > previous.file.length) {
+            previous.file.deselect()
+
+            return {
+              file: current,
+              torrentIndex: index
+            }
+          }
+        }
+
+        // Deselect this file
+        current.deselect()
+
+        return previous
+
+      }, { file: torrent.files[0], torrentIndex: 0 })
+
+      // Select this file to be the main
+      file.select()
+
       this.torrents.push({
         _id: download._id,
-        torrent
+        torrent,
+        file
       })
 
-      let lastUpdateProgress = null
+      let lastUpdate = {
+        progress: null,
+        numPeers: null
+      }
+
+      torrent.on('noPeers', (a) => {
+        console.log('No Peers', a)
+      })
 
       torrent.on('download', async () => {
         const newProgress = torrent.progress * 100
 
         // Only update every 0.2 %
-        if (lastUpdateProgress === null || (lastUpdateProgress + 0.2) < newProgress) {
+        if (lastUpdate.progress === null
+          || (lastUpdate.progress + 0.2) < newProgress
+          || lastUpdate.numPeers !== torrent.numPeers
+        ) {
           this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
 
-          lastUpdateProgress = newProgress
+          lastUpdate = {
+            progress: newProgress,
+            numPeers: torrent.numPeers
+          }
 
           // Update the item
           this.updateOne(download, {
@@ -257,7 +303,7 @@ export class TorrentService {
         this.logger.log(`[${download._id}]: Download complete`)
 
         // Remove from torrents
-        this.removeFromTorrents(download)
+        this.removeFromTorrents(download, false)
 
         await this.updateOne(download, {
           progress: 100,
@@ -301,13 +347,13 @@ export class TorrentService {
   /**
    * Removes a download from torrents
    */
-  private removeFromTorrents(download: Model<Download>) {
+  private removeFromTorrents(download: Model<Download>, cleanUp) {
     this.torrents = this.torrents.filter((tor) => {
       if (tor._id !== download._id) {
         return true
       }
 
-      if (download.type === 'stream') {
+      if (download.type === 'stream' && cleanUp) {
         // Delete the download
         download.delete()
 

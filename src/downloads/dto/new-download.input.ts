@@ -9,8 +9,8 @@ export class NewDownloadInput {
   @Field({ description: 'Type of the download: stream or download.', nullable: true, defaultValue: 'download' })
   type: string
 
-  @Field({ description: 'Variant of the download: movie or episode.' })
-  variant: string
+  @Field({ description: 'The item\'s of the download, episode or movie.' })
+  itemType: string
 
   @Field({ description: 'The quality to download.' })
   quality: string
