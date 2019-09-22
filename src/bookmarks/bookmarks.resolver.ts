@@ -1,11 +1,8 @@
-import { NotFoundException } from '@nestjs/common'
-import { Args, Parent, Query, ResolveProperty, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
 
-import { Movie, Show, Content } from '@pct-org/mongo-models'
-import { Images } from '@pct-org/mongo-models'
+import { Content } from '@pct-org/mongo-models'
 
 import { BookmarksArgs } from './dto/bookmarks.args'
-import { NewBookmarkInput } from './dto/new-bookmark.input'
 import { BookmarksService } from './bookmarks.service'
 
 @Resolver(of => Content)
