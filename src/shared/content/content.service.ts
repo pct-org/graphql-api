@@ -19,6 +19,17 @@ export abstract class ContentService {
       }
     }
 
+    if (contentArgs.query && contentArgs.query.trim().length > 0) {
+      query = {
+        ...query,
+        title: {
+          // Update the query to make it better searchable
+          $regex: contentArgs.query.split(' ').join('.+'),
+          $options: 'i'
+        }
+      }
+    }
+
     return query
   }
 

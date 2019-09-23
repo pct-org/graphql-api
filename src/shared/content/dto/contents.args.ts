@@ -19,4 +19,7 @@ export class ContentsArgs {
   @Field()
   noBookmarks: boolean = false
 
+  @Field({ nullable: true })
+  query: string = null
+
 }

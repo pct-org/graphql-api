@@ -1,4 +1,4 @@
-import { ArgsType, Field } from 'type-graphql'
+import { ArgsType } from 'type-graphql'
 
 import { ContentsArgs } from '../../shared/content/dto/contents.args'
 
