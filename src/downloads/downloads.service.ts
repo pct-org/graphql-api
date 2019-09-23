@@ -6,7 +6,7 @@ import { Episode, Movie, Download } from '@pct-org/mongo-models'
 import { DownloadsArgs } from './dto/downloads.args'
 import { DownloadArgs } from './dto/download.args'
 import { NewDownloadInput } from './dto/new-download.input'
-import { TorrentService } from '../shared/services/torrent.service'
+import { TorrentService } from '../shared/torrent/torrent.service'
 
 @Injectable()
 export class DownloadsService {

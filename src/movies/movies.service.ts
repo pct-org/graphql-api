@@ -36,7 +36,7 @@ export class MoviesService extends ContentService {
     if (moviesArgs.noWatched) {
       query = {
         ...query,
-        watched: false
+        'watched.complete': false
       }
     }
 

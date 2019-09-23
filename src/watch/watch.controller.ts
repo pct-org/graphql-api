@@ -3,11 +3,15 @@ import * as path from 'path'
 import { Controller, Get, Res, Req, Param } from '@nestjs/common'
 
 import { ConfigService } from '../shared/config/config.service'
+import { TorrentService } from '../shared/torrent/torrent.service'
 
 @Controller()
 export class WatchController {
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly torrentService: TorrentService,
+  ) {}
 
   @Get('watch/:_id')
   watch(

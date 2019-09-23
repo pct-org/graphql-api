@@ -5,7 +5,7 @@ import { DownloadsArgs } from './dto/downloads.args'
 import { DownloadArgs } from './dto/download.args'
 import { DownloadsService } from './downloads.service'
 
-import { TorrentService } from '../shared/services/torrent.service'
+import { TorrentService } from '../shared/torrent/torrent.service'
 import { formatKbToString, formatMsToRemaining } from '../shared/utils'
 import { MoviesService } from '../movies/movies.service'
 import { EpisodesService } from '../episodes/episodes.service'
