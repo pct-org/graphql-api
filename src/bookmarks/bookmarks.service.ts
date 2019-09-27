@@ -27,7 +27,16 @@ export class BookmarksService {
       }
     )
 
-    const shows = await this.showModel.find(
+    const shows = await this.findAllShows(bookmarksArgs)
+
+    return [
+      ...movies,
+      ...shows
+    ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
+  }
+
+  findAllShows(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
+    return this.showModel.find(
       {
         bookmarked: true
       },
@@ -37,11 +46,6 @@ export class BookmarksService {
         limit: bookmarksArgs.limit
       }
     )
-
-    return [
-      ...movies,
-      ...shows
-    ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
   }
 
   /**

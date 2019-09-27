@@ -13,7 +13,4 @@ export class BookmarksArgs {
   @Max(50)
   limit: number = 25
 
-  @Field()
-  sort: string = 'desc'
-
 }

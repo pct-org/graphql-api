@@ -3,12 +3,44 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { Episode } from '@pct-org/mongo-models'
 
+import { BookmarksService } from '../bookmarks/bookmarks.service'
+
 @Injectable()
 export class EpisodesService {
 
   constructor(
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>
   ) {}
+
+  /**
+   * Returns all the episodes for the user that he did not watch
+   * from shows he bookmarked
+   */
+  async findMyEpisodes(bookmarksService: BookmarksService): Promise<Episode[]> {
+    const shows = await bookmarksService.findAllShows({
+      offset: 0,
+      limit: 1000
+    })
+
+    const eightDaysAgo = new Date(new Date().getTime() - (8 * 24 * 60 * 60 * 1000)).getTime()
+
+    return this.episodeModel.find(
+      {
+        showImdbId: {
+          $in: shows.map(show => show._id)
+        },
+        firstAired: {
+          $gt: eightDaysAgo
+        }
+      },
+      {},
+      {
+        sort: {
+          firstAired: -1
+        }
+      }
+    )
+  }
 
   findOne(_id: string): Promise<Episode[]> {
     return this.episodeModel.find(
