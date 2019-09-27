@@ -37,6 +37,14 @@ export class DownloadsResolver {
     @Args('quality') quality: string,
     @Args({ name: 'type', defaultValue: 'download', type: () => String }) type: string
   ): Promise<Download> {
+    const downloadExists = await this.downloadsService.findOne({
+      _id
+    })
+
+    if (downloadExists) {
+      return downloadExists
+    }
+
     const download = await this.downloadsService.addOne({
       _id,
       type,
@@ -52,6 +60,8 @@ export class DownloadsResolver {
 
     return download
   }
+
+  // TODO:: Stop download
 
   @Mutation(returns => Download)
   async startStream(
