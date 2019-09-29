@@ -10,7 +10,7 @@ export class WatchController {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly torrentService: TorrentService,
+    private readonly torrentService: TorrentService
   ) {}
 
   @Get('watch/:_id')
@@ -19,8 +19,7 @@ export class WatchController {
     @Res() res,
     @Req() req
   ) {
-
-    // Get the torrent file and use it as stream with createReadStream
+    const torrent = this.torrentService.torrents.find(torrent => torrent._id === params._id)
 
     // Get all the files for this item
     const files = fs.readdirSync(
@@ -30,8 +29,24 @@ export class WatchController {
       )
     )
 
-    // Find a media file
-    const mediaFile = files.find(file => file.indexOf('.mkv') > -1)
+    // There are no files
+    if (files.length === 0) {
+      res.status(404)
+      return res.send()
+    }
+
+    const mediaFile = files.reduce((previous, current, index) => {
+      const formatIsSupported = !!this.torrentService.supportedFormats.find(format => current.includes(format))
+
+      if (formatIsSupported) {
+        if (current.length > previous.length) {
+          return current
+        }
+      }
+
+      return previous
+
+    }, files[0])
 
     // Return 404 if we did not find a media file
     if (!mediaFile) {
@@ -48,14 +63,22 @@ export class WatchController {
 
     const { size: mediaSize } = fs.statSync(mediaFileLocation)
 
+    let streamOptions = null
+
     // If we have range then we need to start somewhere else
     if (req.headers.range) {
-      const parts = req.headers.range.replace(/bytes=/, '').split('-')
+      const parts = req.headers.range
+        .replace(/bytes=/, '')
+        .split('-')
+
       const partialStart = parts[0]
       const partialEnd = parts[1]
 
       const start = parseInt(partialStart, 10)
-      const end = partialEnd ? parseInt(partialEnd, 10) : mediaSize - 1
+      const end = partialEnd
+        ? parseInt(partialEnd, 10)
+        : mediaSize - 1
+
       const chunkSize = (end - start) + 1
 
       res.status(206)
@@ -66,9 +89,10 @@ export class WatchController {
         'Content-Type': 'video/mp4'
       })
 
-      res.send(
-        fs.createReadStream(mediaFileLocation, { start: start, end: end })
-      )
+      streamOptions = {
+        start: start,
+        end: end
+      }
     } else {
       // Return a stream from the media
       res.status(200)
@@ -76,12 +100,18 @@ export class WatchController {
         'Content-Length': mediaSize,
         'Content-Type': 'video/mp4'
       })
-
-      res.send(
-        fs.createReadStream(mediaFileLocation)
-      )
     }
 
+    if (torrent) {
+      res.send(
+        torrent.file.createReadStream(streamOptions)
+      )
+
+    } else {
+      res.send(
+        fs.createReadStream(mediaFileLocation, streamOptions)
+      )
+    }
   }
 
 }

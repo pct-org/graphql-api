@@ -40,7 +40,7 @@ export class TorrentService {
   /**
    * Items currently downloading
    */
-  private torrents: TorrentInterface[] = []
+  public torrents: TorrentInterface[] = []
 
   /**
    * WebTorrent engine
@@ -50,7 +50,7 @@ export class TorrentService {
   /**
    * All the different supported formats
    */
-  private supportedFormats: string[] = ['mp4', 'ogg', 'mov', 'webmv', 'mkv', 'wmv', 'avi']
+  public supportedFormats: string[] = ['mp4', 'ogg', 'mov', 'webmv', 'mkv', 'wmv', 'avi']
 
   constructor(
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
