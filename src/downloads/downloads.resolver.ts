@@ -75,12 +75,13 @@ export class DownloadsResolver {
       download = await this.startDownload(_id, itemType, quality, 'stream')
     }
 
-    // TODO:: If status is downloading, double check this in the torrentService, if not know there then ignore
-    // if (download.status !== TorrentService.STATUS_DOWNLOADING
-    // && download.status !== TorrentService.STATUS_COMPLETE
-    // ) {
-    this.torrentService.startStreaming(download)
-    // }
+    if (download.status === TorrentService.STATUS_DOWNLOADING) {
+      // TODO:: If status is downloading, double check this in the torrentService, if not know there then ignore
+    }
+
+    if (download.status !== TorrentService.STATUS_COMPLETE) {
+      this.torrentService.startStreaming(download)
+    }
 
     return download
   }
