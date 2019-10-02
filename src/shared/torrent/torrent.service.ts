@@ -89,6 +89,8 @@ export class TorrentService {
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
       if (!downloadingTorrent) {
+        this.cleanUpDownload(download)
+
         return resolve()
       }
 
@@ -157,6 +159,8 @@ export class TorrentService {
       }
     })
 
+    // TODO:: Do something with streams?
+
     this.logger.log(`Found ${this.downloads.length} downloads`)
 
     // this.startDownloads()
@@ -216,7 +220,7 @@ export class TorrentService {
         magnet.url,
         {
           // Add a unique download location for this item
-          path: `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
+          path: this.getDownloadLocation(download)
         },
         this.handleTorrent(resolve, item, download, magnet)
       )
@@ -354,18 +358,32 @@ export class TorrentService {
       }
 
       if (download.type === 'stream' && cleanUp) {
-        // Delete the download
-        download.delete()
-
-        // Remove the download folder
-        rimraf(`${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`, (error) => {
-          if (error) {
-            this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
-          }
-        })
+        this.cleanUpDownload(download)
       }
 
       return false
     })
+  }
+
+  /**
+   * Cleans up a download
+   */
+  private cleanUpDownload(download: Model<Download>) {
+    // Delete the download
+    download.delete()
+
+    // Remove the download folder
+    rimraf(this.getDownloadLocation(download), (error) => {
+      if (error) {
+        this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+      }
+    })
+  }
+
+  /**
+   * Returns the download location for a download
+   */
+  private getDownloadLocation(download: Download) {
+    return `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
   }
 }
