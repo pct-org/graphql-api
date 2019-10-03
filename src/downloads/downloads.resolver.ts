@@ -35,7 +35,7 @@ export class DownloadsResolver {
     @Args('_id') _id: string,
     @Args('itemType') itemType: string,
     @Args('quality') quality: string,
-    @Args({ name: 'type', defaultValue: 'download', type: () => String }) type: string
+    @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string
   ): Promise<Download> {
     const downloadExists = await this.downloadsService.findOne({
       _id
@@ -71,8 +71,9 @@ export class DownloadsResolver {
   ): Promise<Download> {
     let download = await this.download({ _id })
 
+    // TODO:: Also check if quality is the same
     if (!download) {
-      download = await this.startDownload(_id, itemType, quality, 'stream')
+      download = await this.startDownload(_id, itemType, quality, TorrentService.TYPE_STREAM)
     }
 
     if (download.status === TorrentService.STATUS_DOWNLOADING) {

@@ -20,6 +20,9 @@ export class TorrentService {
   public static STATUS_COMPLETE = 'complete'
   public static STATUS_FAILED = 'failed'
 
+  public static TYPE_DOWNLOAD = 'download'
+  public static TYPE_STREAM = 'stream'
+
   private readonly logger = new Logger(TorrentService.name)
 
   /**
@@ -61,6 +64,10 @@ export class TorrentService {
     this.webTorrent = new WebTorrent({ maxConns: 20 })
     this.webTorrent.on('error', (error) => {
       this.logger.error(`[webTorrent]: ${JSON.stringify(error)}`)
+
+      // Create a new one so others can continue
+      this.webTorrent = new WebTorrent({ maxConns: 20 })
+      this.checkForIncompleteDownloads()
     })
 
     // Check for incomplete downloads and add them to the downloads
@@ -89,7 +96,10 @@ export class TorrentService {
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
       if (!downloadingTorrent) {
-        this.cleanUpDownload(download)
+        // Only do cleanup when type is stream
+        if (download.type === TorrentService.TYPE_STREAM) {
+          this.cleanUpDownload(download)
+        }
 
         return resolve()
       }
@@ -357,7 +367,7 @@ export class TorrentService {
         return true
       }
 
-      if (download.type === 'stream' && cleanUp) {
+      if (download.type === TorrentService.TYPE_STREAM && cleanUp) {
         this.cleanUpDownload(download)
       }
 
