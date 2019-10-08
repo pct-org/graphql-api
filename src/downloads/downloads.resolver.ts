@@ -58,7 +58,57 @@ export class DownloadsResolver {
     // Start the queue
     this.torrentService.startDownloads()
 
+    const item = await this.torrentService.getItemForDownload(download)
+
+    await this.torrentService.updateOne(
+      item,
+      {
+        download: {
+          downloadStatus: TorrentService.STATUS_QUEUED,
+          downloading: true
+        }
+      }
+    )
+
     return download
+  }
+
+  @Mutation(returns => Boolean)
+  async removeDownload(
+    @Args('_id') _id: string,
+    @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string
+  ): Promise<Boolean> {
+    const download = await this.download({ _id })
+
+    if (download) {
+      // Only cleanup if the stop type is the same as the start type
+      if (type === download.type) {
+        await this.torrentService.stopDownloading(download)
+
+        // Start the other queued items
+        this.torrentService.startDownloads()
+
+        await this.torrentService.cleanUpDownload(download)
+      }
+
+      const item = await this.torrentService.getItemForDownload(download)
+
+      await this.torrentService.updateOne(
+        item,
+        {
+          download: {
+            downloadedOn: null,
+            downloadStatus: null,
+            downloading: false,
+            downloadComplete: false
+          }
+        }
+      )
+
+      return true
+    }
+
+    return false
   }
 
   // TODO:: Stop download
@@ -91,13 +141,7 @@ export class DownloadsResolver {
   async stopStream(
     @Args('_id') _id: string
   ): Promise<Boolean> {
-    const download = await this.download({ _id })
-
-    if (download) {
-      await this.torrentService.stopStreaming(download)
-    }
-
-    return true
+    return this.removeDownload(_id, TorrentService.TYPE_STREAM)
   }
 
   /**

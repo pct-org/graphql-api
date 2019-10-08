@@ -90,31 +90,28 @@ export class TorrentService {
    *
    * @param download
    */
-  public stopStreaming(download: Download): Promise<any> {
+  public stopDownloading(download: Download): Promise<any> {
     return new Promise((resolve) => {
       // Get the stream
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
       if (!downloadingTorrent) {
-        // Only do cleanup when type is stream
-        if (download.type === TorrentService.TYPE_STREAM) {
-          this.cleanUpDownload(download)
-        }
-
         return resolve()
       }
 
-      this.logger.log(`[${download._id}]: Stop streaming`)
+      this.logger.log(`[${download._id}]: Stop downloading`)
 
       // Destroy the torrent
       downloadingTorrent.torrent.destroy((err) => {
+        downloadingTorrent.resolve()
+
         if (err) {
           this.logger.error(`[${download._id}]: Error stopping download`, err.toString())
         }
 
         this.logger.log(`[${download._id}]: Stopped download`)
 
-        this.removeFromTorrents(download, true)
+        this.removeFromTorrents(download)
 
         resolve()
       })
@@ -185,11 +182,7 @@ export class TorrentService {
     return new Promise((async (resolve) => {
       this.logger.log(`[${download._id}]: Start download`)
 
-      const item = await (
-        download.type === 'movie'
-          ? this.movieModel
-          : this.episodeModel
-      ).findById(download._id)
+      const item = await this.getItemForDownload(download)
 
       const { torrents } = item
 
@@ -205,8 +198,12 @@ export class TorrentService {
           status: TorrentService.STATUS_FAILED
         })
 
-        item.downloading = false
-        await item.save()
+        await this.updateOne(item, {
+          download: {
+            downloadStatus: TorrentService.STATUS_FAILED,
+            downloading: false
+          }
+        })
 
         // Resolve instead of reject as no try catch is around the method
         return resolve()
@@ -214,9 +211,13 @@ export class TorrentService {
         // TODO:: Check health otherwise search for a better one
       }
 
-      // Update item that we are downloading
-      item.downloading = true
-      await item.save()
+      // Update item that we are connecting
+      await this.updateOne(item, {
+        download: {
+          downloadStatus: TorrentService.STATUS_CONNECTING,
+          downloading: true
+        }
+      })
 
       // Update the status to connecting
       await this.updateOne(download, {
@@ -275,13 +276,16 @@ export class TorrentService {
       this.torrents.push({
         _id: download._id,
         torrent,
-        file
+        file,
+        resolve,
       })
 
       let lastUpdate = {
         progress: null,
         numPeers: null
       }
+
+      let updatedItem = false
 
       torrent.on('noPeers', (a) => {
         console.log('No Peers', a)
@@ -303,13 +307,25 @@ export class TorrentService {
           }
 
           // Update the item
-          this.updateOne(download, {
+          await this.updateOne(download, {
             progress: newProgress.toFixed(1),
             status: TorrentService.STATUS_DOWNLOADING,
             timeRemaining: torrent.timeRemaining,
             speed: torrent.downloadSpeed,
             numPeers: torrent.numPeers
           })
+
+          if (!updatedItem) {
+            updatedItem = true
+
+            // Update item that we are downloading
+            await this.updateOne(item, {
+              download: {
+                downloadStatus: TorrentService.STATUS_DOWNLOADING,
+                downloading: true
+              }
+            })
+          }
         }
       })
 
@@ -317,7 +333,7 @@ export class TorrentService {
         this.logger.log(`[${download._id}]: Download complete`)
 
         // Remove from torrents
-        this.removeFromTorrents(download, false)
+        this.removeFromTorrents(download)
 
         await this.updateOne(download, {
           progress: 100,
@@ -327,15 +343,19 @@ export class TorrentService {
           numPeers: null
         })
 
+        await this.updateOne(item, {
+          download: {
+            downloadStatus: TorrentService.STATUS_COMPLETE,
+            downloading: false,
+            downloadComplete: true,
+            downloadedOn: Number(new Date())
+          }
+        })
+
         // Remove the magnet from the client
         this.webTorrent.remove(
           magnet.url
         )
-
-        item.downloading = false
-        item.downloaded = true
-        item.downloadedOn = Number(new Date())
-        item.save()
 
         resolve()
       })
@@ -345,30 +365,37 @@ export class TorrentService {
   /**
    * Updates download item in the databse
    *
-   * @param download
+   * @param item
    * @param update
    */
-  private async updateOne(download: Model<Download>, update: Object): Promise<Download> {
+  public async updateOne(item: Model<Download | Movie | Episode>, update): Promise<Download | Movie | Episode> {
     // Apply the update
-    Object.keys(update).forEach((key) => download[key] = update[key])
+    if (Object.keys(update).length === 1 && update.hasOwnProperty('download')) {
+      if (!item.hasOwnProperty('download')) {
+        item.download = {}
+      }
 
-    download.updatedAt = Number(new Date())
+      Logger.debug(`[${item._id}]: Update download info to "${JSON.stringify(update.download)}"`)
+
+      Object.keys(update.download).forEach((key) => item.download[key] = update.download[key])
+
+    } else {
+      Object.keys(update).forEach((key) => item[key] = update[key])
+    }
+
+    item.updatedAt = Number(new Date())
 
     // Save the update
-    return download.save()
+    return item.save()
   }
 
   /**
    * Removes a download from torrents
    */
-  private removeFromTorrents(download: Model<Download>, cleanUp) {
+  private removeFromTorrents(download: Model<Download>) {
     this.torrents = this.torrents.filter((tor) => {
       if (tor._id !== download._id) {
         return true
-      }
-
-      if (download.type === TorrentService.TYPE_STREAM && cleanUp) {
-        this.cleanUpDownload(download)
       }
 
       return false
@@ -378,7 +405,7 @@ export class TorrentService {
   /**
    * Cleans up a download
    */
-  private cleanUpDownload(download: Model<Download>) {
+  public cleanUpDownload(download: Model<Download>) {
     // Delete the download
     download.delete()
 
@@ -388,6 +415,19 @@ export class TorrentService {
         this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
       }
     })
+  }
+
+  /**
+   * Returns the item for the download
+   *
+   * @param download
+   */
+  public getItemForDownload(download: Download): Promise<Episode | Movie> {
+    return (
+      download.type === 'movie'
+        ? this.movieModel
+        : this.episodeModel
+    ).findById(download._id)
   }
 
   /**
