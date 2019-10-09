@@ -97,6 +97,8 @@ export class TorrentService {
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
       if (!downloadingTorrent) {
+        this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length - 1}`)
+
         return resolve()
       }
 
@@ -125,7 +127,7 @@ export class TorrentService {
   public addDownload(download: Download) {
     this.downloads.push(download)
 
-    this.logger.log(`[${download._id}]: Added to queue (${this.downloads.length})`)
+    this.logger.log(`[${download._id}]: Added to queue, new size: ${this.downloads.length}`)
   }
 
   /**
@@ -183,6 +185,15 @@ export class TorrentService {
     return new Promise((async (resolve) => {
       this.logger.log(`[${download._id}]: Start download`)
 
+      // Check if the download still exists and has not been deleted in the meanwhile
+      const downloadStillExists = this.downloads.find(down => down._id === download._id)
+
+      if (!downloadStillExists) {
+        this.logger.log(`[${download._id}]: Download was removed, skipping`)
+
+        return resolve()
+      }
+
       const item = await this.getItemForDownload(download)
 
       const { torrents } = item
@@ -192,7 +203,7 @@ export class TorrentService {
 
       // Check if we have a magnet to be sure
       if (!magnet) {
-        // TODO:: Search for it
+        // TODO:: Search for it?
 
         // No magnet found, update status to failed
         await this.updateOne(download, {
@@ -274,6 +285,7 @@ export class TorrentService {
       // Select this file to be the main
       file.select()
 
+      // Add to active torrents array
       this.torrents.push({
         _id: download._id,
         torrent,
@@ -286,6 +298,7 @@ export class TorrentService {
         numPeers: null
       }
 
+      // Keep track if we updated the episode of movie with the new status
       let updatedItem = false
 
       torrent.on('noPeers', (a) => {
@@ -358,6 +371,7 @@ export class TorrentService {
           magnet.url
         )
 
+        // Where done, resolve
         resolve()
       })
     }
@@ -378,6 +392,7 @@ export class TorrentService {
 
       this.logger.debug(`[${item._id}]: Update download info to "${JSON.stringify(update.download)}"`)
 
+      // Update the download keys of the item
       Object.keys(update.download).forEach((key) => item.download[key] = update.download[key])
 
     } else {
@@ -388,7 +403,7 @@ export class TorrentService {
 
     try {
       // Save the update
-      return item.save()
+      return await item.save()
 
     } catch (e) {
       this.logger.error(`[${item._id}]: ${e.message || e}`)
@@ -410,6 +425,9 @@ export class TorrentService {
   public cleanUpDownload(download: Model<Download>) {
     // Delete the download
     download.delete()
+
+    // Remove from array
+    this.downloads = this.downloads.filter(down => down._id !== download._id)
 
     // Remove the download folder
     rimraf(this.getDownloadLocation(download), (error) => {
