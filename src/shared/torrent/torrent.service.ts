@@ -123,9 +123,9 @@ export class TorrentService {
    * Adds a download to the queued items
    */
   public addDownload(download: Download) {
-    this.logger.log(`[${download._id}]: Added to queue`)
-
     this.downloads.push(download)
+
+    this.logger.log(`[${download._id}]: Added to queue (${this.downloads.length})`)
   }
 
   /**
@@ -376,7 +376,7 @@ export class TorrentService {
         item.download = {}
       }
 
-      Logger.debug(`[${item._id}]: Update download info to "${JSON.stringify(update.download)}"`)
+      this.logger.debug(`[${item._id}]: Update download info to "${JSON.stringify(update.download)}"`)
 
       Object.keys(update.download).forEach((key) => item.download[key] = update.download[key])
 
@@ -386,8 +386,15 @@ export class TorrentService {
 
     item.updatedAt = Number(new Date())
 
-    // Save the update
-    return item.save()
+    try {
+      // Save the update
+      return item.save()
+
+    } catch (e) {
+      this.logger.error(`[${item._id}]: ${e.message || e}`)
+
+      return item
+    }
   }
 
   /**
@@ -419,7 +426,7 @@ export class TorrentService {
    */
   public getItemForDownload(download: Download): Promise<Episode | Movie> {
     return (
-      download.type === 'movie'
+      download.itemType === 'movie'
         ? this.movieModel
         : this.episodeModel
     ).findById(download._id)
