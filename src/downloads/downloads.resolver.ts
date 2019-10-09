@@ -73,11 +73,11 @@ export class DownloadsResolver {
     return download
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => Download)
   async removeDownload(
     @Args('_id') _id: string,
     @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string
-  ): Promise<Boolean> {
+  ): Promise<Download> {
     const download = await this.download({ _id })
 
     if (download) {
@@ -105,13 +105,14 @@ export class DownloadsResolver {
         }
       )
 
-      return true
+      download.status = TorrentService.STATUS_REMOVED
+      download.progress = 0
+
+      return download
     }
 
-    return false
+    return null
   }
-
-  // TODO:: Stop download
 
   @Mutation(returns => Download)
   async startStream(
@@ -137,10 +138,10 @@ export class DownloadsResolver {
     return download
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => Download)
   async stopStream(
     @Args('_id') _id: string
-  ): Promise<Boolean> {
+  ): Promise<Download> {
     return this.removeDownload(_id, TorrentService.TYPE_STREAM)
   }
 

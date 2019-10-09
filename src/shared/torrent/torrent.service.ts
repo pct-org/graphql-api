@@ -19,6 +19,7 @@ export class TorrentService {
   public static STATUS_CONNECTING = 'connecting'
   public static STATUS_COMPLETE = 'complete'
   public static STATUS_FAILED = 'failed'
+  public static STATUS_REMOVED = 'removed'
 
   public static TYPE_DOWNLOAD = 'download'
   public static TYPE_STREAM = 'stream'
@@ -277,7 +278,7 @@ export class TorrentService {
         _id: download._id,
         torrent,
         file,
-        resolve,
+        resolve
       })
 
       let lastUpdate = {
@@ -393,13 +394,7 @@ export class TorrentService {
    * Removes a download from torrents
    */
   private removeFromTorrents(download: Model<Download>) {
-    this.torrents = this.torrents.filter((tor) => {
-      if (tor._id !== download._id) {
-        return true
-      }
-
-      return false
-    })
+    this.torrents = this.torrents.filter(tor => tor._id !== download._id)
   }
 
   /**
