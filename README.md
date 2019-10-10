@@ -27,13 +27,28 @@ Popcorn Time consists of several projects, each doing it's own part.
 ## Installation
 
 ```bash
-// TODO
+$ yarn install
 ```
 
 ## Running the API
 
+**Requirements**
+- Make sure MongoDB is running, for Mac users see [`@pct-org/scraper`] repo for the docker-compose file.
+- Copy the `.env.example` file and fill it in
+
+### Development
 ```bash
-// TODO
+$ yarn build:watch
+
+# Also run this in a different terminal tab
+$ yarn start:watch
+```
+
+### Production
+
+```bash
+$ yarn build
+$ yarn start
 ```
 
 ## [License](./LICENSE)
