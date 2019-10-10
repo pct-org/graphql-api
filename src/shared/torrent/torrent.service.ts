@@ -301,8 +301,35 @@ export class TorrentService {
       // Keep track if we updated the episode of movie with the new status
       let updatedItem = false
 
-      torrent.on('noPeers', (a) => {
-        console.log('No Peers', a)
+      torrent.on('noPeers', async (announceType) => {
+        if (announceType === 'dht') {
+          this.logger.warn(`[${download._id}]: No peers found`)
+          // No peers found, update status to failed
+          await this.updateOne(download, {
+            status: TorrentService.STATUS_FAILED
+          })
+
+          await this.updateOne(item, {
+            download: {
+              downloadStatus: TorrentService.STATUS_FAILED,
+              downloading: false
+            }
+          })
+
+          // Remove from torrents
+          this.removeFromTorrents(download)
+
+          // Also cleanup this download
+          await this.cleanUpDownload(download)
+
+          // Remove the magnet from the client
+          this.webTorrent.remove(
+            magnet.url
+          )
+
+          // Resolve instead of reject as no try catch is around the method
+          resolve()
+        }
       })
 
       torrent.on('download', async () => {
@@ -448,6 +475,15 @@ export class TorrentService {
         ? this.movieModel
         : this.episodeModel
     ).findById(download._id)
+  }
+
+  /**
+   * Get's the torrent for the download
+   *
+   * @param download
+   */
+  public getTorrentForDownload(download: Download): TorrentInterface {
+    return this.torrents.find(torrent => torrent._id === download._id)
   }
 
   /**
