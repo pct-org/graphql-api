@@ -1,12 +1,14 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { Controller, Get, Res, Req, Param } from '@nestjs/common'
+import { Controller, Get, Res, Req, Param, Logger } from '@nestjs/common'
 
 import { ConfigService } from '../shared/config/config.service'
 import { TorrentService } from '../shared/torrent/torrent.service'
 
 @Controller()
 export class WatchController {
+
+  private readonly logger = new Logger(TorrentService.name)
 
   constructor(
     private readonly configService: ConfigService,
@@ -19,6 +21,7 @@ export class WatchController {
     @Res() res,
     @Req() req
   ) {
+    this.logger.debug(`[${params._id}]: Watch`)
     const torrent = this.torrentService.torrents.find(torrent => torrent._id === params._id)
 
     // Get all the files for this item

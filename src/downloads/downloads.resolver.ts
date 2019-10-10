@@ -52,11 +52,13 @@ export class DownloadsResolver {
       quality
     })
 
-    // Add the download to the queue
     this.torrentService.addDownload(download)
 
-    // Start the queue
-    this.torrentService.startDownloads()
+    // Add the download to the queue
+    if (type !== TorrentService.TYPE_STREAM) {
+      // Start the queue
+      this.torrentService.startDownloads()
+    }
 
     const item = await this.torrentService.getItemForDownload(download)
 
@@ -81,7 +83,7 @@ export class DownloadsResolver {
     const download = await this.download({ _id })
 
     if (download) {
-      // Only cleanup if the stop type is the same as the start type
+      // Only cleanup and update if the stop type is the same as the start type
       if (type === download.type) {
         await this.torrentService.stopDownloading(download)
 
@@ -89,24 +91,24 @@ export class DownloadsResolver {
         this.torrentService.startDownloads()
 
         await this.torrentService.cleanUpDownload(download)
-      }
 
-      const item = await this.torrentService.getItemForDownload(download)
+        const item = await this.torrentService.getItemForDownload(download)
 
-      await this.torrentService.updateOne(
-        item,
-        {
-          download: {
-            downloadedOn: null,
-            downloadStatus: null,
-            downloading: false,
-            downloadComplete: false
+        await this.torrentService.updateOne(
+          item,
+          {
+            download: {
+              downloadedOn: null,
+              downloadStatus: null,
+              downloading: false,
+              downloadComplete: false
+            }
           }
-        }
-      )
+        )
 
-      download.status = TorrentService.STATUS_REMOVED
-      download.progress = 0
+        download.status = TorrentService.STATUS_REMOVED
+        download.progress = 0
+      }
 
       return download
     }
@@ -122,16 +124,12 @@ export class DownloadsResolver {
   ): Promise<Download> {
     let download = await this.download({ _id })
 
-    // TODO:: Also check if quality is the same
     if (!download) {
       download = await this.startDownload(_id, itemType, quality, TorrentService.TYPE_STREAM)
     }
 
-    if (download.status === TorrentService.STATUS_DOWNLOADING) {
-      // TODO:: If status is downloading, double check this in the torrentService, if not know there then ignore
-    }
-
-    if (download.status !== TorrentService.STATUS_COMPLETE) {
+    // Check if the download is not complete or downloading
+    if (![TorrentService.STATUS_COMPLETE, TorrentService.STATUS_DOWNLOADING].includes(download.status)) {
       this.torrentService.startStreaming(download)
     }
 
