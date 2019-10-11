@@ -1,8 +1,8 @@
-import { HttpService, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
-import { Movie, Show } from '@pct-org/mongo-models'
+import { Movie, Show, Episode } from '@pct-org/mongo-models'
 
 import { ConfigService } from '../shared/config/config.service'
 import { Status } from './status.object-type'
@@ -15,27 +15,17 @@ export class StatusService {
     private readonly movieModel: Model<Movie>,
     @InjectModel('Shows')
     private readonly showModel: Model<Show>,
-    private readonly httpService: HttpService,
+    @InjectModel('Episodes')
+    private readonly episodesModel: Model<Episode>,
     private readonly configService: ConfigService
   ) {}
 
   async getStatus(): Promise<Status> {
-    try {
-      const status = await this.httpService.get(
-        `${this.configService.get('SCRAPER_URL')}/status`
-      ).toPromise()
-
-      return status.data
-
-    } catch (e) {
-      return {
-        version: null,
-        status: 'offline',
-        totalMovies: this.movieModel.countDocuments(),
-        totalShows: this.showModel.countDocuments(),
-        updated: 0,
-        uptime: 0
-      }
+    return {
+      version: this.configService.version,
+      totalMovies: this.movieModel.countDocuments(),
+      totalShows: this.showModel.countDocuments(),
+      totalEpisodes: this.episodesModel.countDocuments()
     }
   }
 

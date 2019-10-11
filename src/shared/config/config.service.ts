@@ -4,6 +4,8 @@ import * as Joi from '@hapi/joi'
 
 import * as fs from 'fs'
 
+import { version } from '../../../package.json'
+
 export interface EnvConfig {
   [key: string]: string;
 }
@@ -26,6 +28,13 @@ export class ConfigService {
     const config = dotenv.parse(fs.readFileSync('.env'))
 
     this.envConfig = this.validateInput(config)
+  }
+
+  /**
+   * Returns the current version of this API
+   */
+  get version() {
+    return version
   }
 
   /**
