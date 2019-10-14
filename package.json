@@ -31,6 +31,7 @@
     "apollo-server-fastify": "^2.9.3",
     "dotenv": "^8.1.0",
     "fastify-static": "^2.5.0",
+    "fluent-ffmpeg": "^2.1.2",
     "graphql": "^14.5.4",
     "graphql-subscriptions": "^1.1.0",
     "mongoose": "^5.7.0",
