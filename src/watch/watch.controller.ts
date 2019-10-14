@@ -21,6 +21,7 @@ export class WatchController {
     @Res() res,
     @Req() req
   ) {
+    // TODO:: If url contains device=chromecast then use FFMPEG thing to convert video
     this.logger.debug(`[${params._id}]: Watch`)
     const torrent = this.torrentService.torrents.find(torrent => torrent._id === params._id)
 

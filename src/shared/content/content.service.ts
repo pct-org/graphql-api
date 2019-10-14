@@ -20,6 +20,7 @@ export abstract class ContentService {
     }
 
     if (contentArgs.query && contentArgs.query.trim().length > 0) {
+      // TODO:: Implement Text index for better search
       query = {
         ...query,
         title: {
