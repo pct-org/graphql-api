@@ -39,6 +39,7 @@ export class WatchController {
       return res.send()
     }
 
+    // Get the correct media file
     const mediaFile = files.reduce((previous, current, index) => {
       const formatIsSupported = !!this.torrentService.supportedFormats.find(format => current.includes(format))
 
@@ -114,7 +115,7 @@ export class WatchController {
     const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
 
     if (isChromeCast) {
-      this.logger.debug('Device is chromecast')
+      this.logger.debug(`[${params._id}]: Device is chromecast`)
 
       // Double check if it's needed
       ffmpeg.ffprobe(mediaFileLocation, (err, metadata) => {
@@ -124,15 +125,17 @@ export class WatchController {
         } else {
           const videoStream = metadata.streams.find(stream => stream.codec_type === 'video')
 
+          this.logger.debug(`[${params._id}]: Stream metadata ${JSON.stringify(metadata)}`)
+
           // We need to transform it
-          if (['h264'].includes(videoStream.codec_name)) {
+          if (['h264', 'hevc'].includes(videoStream.codec_name)) {
             // Improve the output stream so Chromecast can play it
             res.send(
               ffmpeg(readStream)
                 .format('matroska')
                 .addOption('-movflags', 'faststart')
-                .on('progress', progress => this.logger.debug(`[ffmpeg]: Processed until ${progress.timemark}`))
-                .on('error', err => this.logger.error(`[ffmpeg]: ${err.message || err}`))
+                .on('progress', progress => this.logger.debug(`[${params._id}]: ffmpeg processed until ${progress.timemark}`))
+                .on('error', err => this.logger.error(`[${params._id}] ffmpeg threw "${err.message || err}"`))
                 .pipe(null, { end: true })
             )
 
