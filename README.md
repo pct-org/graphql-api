@@ -33,7 +33,7 @@ $ yarn install
 ## Running the API
 
 **Requirements**
-- Make sure MongoDB is running, for Mac users see [`@pct-org/scraper`] repo for the docker-compose file.
+- Make sure MongoDB is running, for Mac users see [`@pct-org/getting-started`] repo for the docker-compose file.
 - Copy the `.env.example` file and fill it in
 
 ### Development
