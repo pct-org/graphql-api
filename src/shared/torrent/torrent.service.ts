@@ -97,8 +97,6 @@ export class TorrentService {
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
       if (!downloadingTorrent) {
-        this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length - 1}`)
-
         return resolve()
       }
 
@@ -453,8 +451,14 @@ export class TorrentService {
     // Delete the download
     download.delete()
 
-    // Remove from array
-    this.downloads = this.downloads.filter(down => down._id !== download._id)
+    const down = this.downloads.find(down => down._id === download._id)
+
+    if (down) {
+      // Remove from array
+      this.downloads = this.downloads.filter(down => down._id !== download._id)
+
+      this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length - 1}`)
+    }
 
     // Remove the download folder
     rimraf(this.getDownloadLocation(download), (error) => {

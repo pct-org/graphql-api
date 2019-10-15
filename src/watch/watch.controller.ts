@@ -127,6 +127,19 @@ export class WatchController {
 
           this.logger.debug(`[${params._id}]: Stream metadata ${JSON.stringify(metadata)}`)
 
+          // Thoughts: h264 && level = 31 does not work
+
+          // Thoughts: h264 && profile = Main works
+
+          // Thoughts: h264 && profile = High && ENCODER: 'Lavf58.31.101' works
+          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.9 + libmatroska v1.5.2', works
+          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.3 + libmatroska v1.4.4', works
+
+          // Thoughts: h264 && profile = Main && encoder: 'libebml v1.3.6 + libmatroska v1.4.9', works
+          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.6 + libmatroska v1.4.9', does not work
+
+          // hevc vidoe never works
+
           // We need to transform it
           if (['h264', 'hevc'].includes(videoStream.codec_name)) {
             // Improve the output stream so Chromecast can play it
