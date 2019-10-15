@@ -23,6 +23,7 @@ export class EpisodesService {
     })
 
     const eightDaysAgo = new Date(new Date().getTime() - (8 * 24 * 60 * 60 * 1000)).getTime()
+    const today = new Date().getTime()
 
     return this.episodeModel.find(
       {
@@ -30,7 +31,8 @@ export class EpisodesService {
           $in: shows.map(show => show._id)
         },
         firstAired: {
-          $gt: eightDaysAgo
+          $gt: eightDaysAgo,
+          $lt: today
         }
       },
       {},
