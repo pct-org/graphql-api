@@ -25,7 +25,9 @@ export class ConfigService {
   private readonly envConfig: { [key: string]: string }
 
   constructor() {
-    const config = dotenv.parse(fs.readFileSync('.env'))
+    const config = fs.existsSync('.env')
+      ? dotenv.parse(fs.readFileSync('.env'))
+      : process.env
 
     this.envConfig = this.validateInput(config)
   }
@@ -109,7 +111,7 @@ export class ConfigService {
         .required()
     })
 
-    const { error, value: validatedEnvConfig } = envVarsSchema.validate(envConfig)
+    const { error, value: validatedEnvConfig } = envVarsSchema.validate(envConfig, { stripUnknown: true })
 
     if (error) {
       throw new Error(`Config validation error: ${error.message}`)

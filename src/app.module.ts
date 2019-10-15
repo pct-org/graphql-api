@@ -55,8 +55,8 @@ import { WatchModule } from './watch/watch.module'
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         debug: configService.isDevelopment,
-        playground: true,
-        tracing: true,
+        playground: configService.isDevelopment,
+        tracing: configService.isDevelopment,
 
         installSubscriptionHandlers: true,
         autoSchemaFile: 'schema.gql'
