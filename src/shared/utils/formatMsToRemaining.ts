@@ -6,18 +6,18 @@
 export default (duration: number): string => {
   let remain = duration || 0
 
-  let days = Math.floor(remain / (1000 * 60 * 60 * 24))
+  const days = Math.floor(remain / (1000 * 60 * 60 * 24))
   remain = remain % (1000 * 60 * 60 * 24)
 
-  let hours = Math.floor(remain / (1000 * 60 * 60))
+  const hours = Math.floor(remain / (1000 * 60 * 60))
   remain = remain % (1000 * 60 * 60)
 
-  let minutes = Math.floor(remain / (1000 * 60))
+  const minutes = Math.floor(remain / (1000 * 60))
   remain = remain % (1000 * 60)
 
-  let seconds = Math.floor(remain / (1000))
+  const seconds = Math.floor(remain / (1000))
 
-  let parts = []
+  const parts = []
   if (days) {
     let ret = days + ' day'
     if (days !== 1) {

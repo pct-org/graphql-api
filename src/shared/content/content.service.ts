@@ -2,7 +2,7 @@ import { ContentsArgs } from './dto/contents.args'
 
 export abstract class ContentService {
 
-  protected getOptions(contentArgs: ContentsArgs): Object {
+  protected getOptions(contentArgs: ContentsArgs): object {
     return {
       skip: contentArgs.offset,
       limit: contentArgs.limit,
@@ -10,7 +10,7 @@ export abstract class ContentService {
     }
   }
 
-  protected getQuery(contentArgs: ContentsArgs): Object {
+  protected getQuery(contentArgs: ContentsArgs): object {
     let query = {}
 
     if (contentArgs.noBookmarks) {
@@ -34,7 +34,7 @@ export abstract class ContentService {
     return query
   }
 
-  protected getSorting(contentArgs: ContentsArgs): Object {
+  protected getSorting(contentArgs: ContentsArgs): object {
     const order = -1
 
     switch (contentArgs.sort) {
