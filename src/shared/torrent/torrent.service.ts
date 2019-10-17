@@ -298,6 +298,8 @@ export class TorrentService {
 
       // Keep track if we updated the episode of movie with the new status
       let updatedItem = false
+      // Keep track if we are currently updating the model, prevents updating same item twice at the same time
+      let updatingModel = false
 
       torrent.on('noPeers', async (announceType) => {
         if (announceType === 'dht') {
@@ -345,14 +347,22 @@ export class TorrentService {
             numPeers: torrent.numPeers
           }
 
-          // Update the item
-          await this.updateOne(download, {
-            progress: newProgress.toFixed(1),
-            status: TorrentService.STATUS_DOWNLOADING,
-            timeRemaining: torrent.timeRemaining,
-            speed: torrent.downloadSpeed,
-            numPeers: torrent.numPeers
-          })
+          // Don't update if we are already updating
+          if (!updatingModel) {
+            updatingModel = true
+
+            // Update the item
+            await this.updateOne(download, {
+              progress: newProgress.toFixed(1),
+              status: TorrentService.STATUS_DOWNLOADING,
+              timeRemaining: torrent.timeRemaining,
+              speed: torrent.downloadSpeed,
+              numPeers: torrent.numPeers
+            })
+
+            // Update that we are not updating anymore
+            updatingModel = false
+          }
 
           if (!updatedItem) {
             updatedItem = true

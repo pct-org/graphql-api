@@ -113,9 +113,16 @@ export class WatchController {
 
     // Check if the device is chromecast
     const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
+    const forceTranscoding = req.query && !!req.query.transcode
 
-    if (isChromeCast) {
-      this.logger.debug(`[${params._id}]: Device is chromecast`)
+    if (isChromeCast || forceTranscoding) {
+      if (isChromeCast) {
+        this.logger.debug(`[${params._id}]: Device is chromecast`)
+      }
+
+      if (forceTranscoding) {
+        this.logger.debug(`[${params._id}]: Force transcoding`)
+      }
 
       // Double check if it's needed
       ffmpeg.ffprobe(mediaFileLocation, (err, metadata) => {
@@ -141,7 +148,7 @@ export class WatchController {
           // hevc vidoe never works
 
           // We need to transform it
-          if (['h264', 'hevc'].includes(videoStream.codec_name)) {
+          if (forceTranscoding && ['hevc'].includes(videoStream.codec_name)) {
             // Improve the output stream so Chromecast can play it
             res.send(
               ffmpeg(readStream)
