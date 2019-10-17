@@ -8,6 +8,15 @@
   <a target="_blank" href="https://gitter.im/pct-org/app?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge">
     <img src="https://badges.gitter.im/popcorn-time-desktop.svg" alt="Gitter" />
   </a>
+  <a target="_blank" href="https://david-dm.org/pct-org/graphql-api" title="dependencies status">
+    <img src="https://david-dm.org/pct-org/graphql-api/status.svg" />
+  </a>
+  <a target="_blank" href="https://david-dm.org/pct-org/graphql-api?type=dev" title="devDependencies status">
+    <img src="https://david-dm.org/pct-org/graphql-api/dev-status.svg" />
+  </a>
+    <a target="_blank" href="https://github.com/pct-org/graphql-api/pulls">
+      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" />
+    </a>
 </div>
 
 ---
