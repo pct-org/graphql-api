@@ -30,7 +30,7 @@ export class MoviesService extends ContentService {
     )
   }
 
-  protected getQuery(moviesArgs: MoviesArgs): Object {
+  protected getQuery(moviesArgs: MoviesArgs): object {
     let query = super.getQuery(moviesArgs)
 
     if (moviesArgs.noWatched) {

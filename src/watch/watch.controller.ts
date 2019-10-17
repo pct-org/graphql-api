@@ -23,7 +23,7 @@ export class WatchController {
     @Req() req
   ) {
     this.logger.debug(`[${params._id}]: Watch`)
-    const torrent = this.torrentService.torrents.find(torrent => torrent._id === params._id)
+    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
 
     // Get all the files for this item
     const files = fs.readdirSync(
@@ -95,8 +95,8 @@ export class WatchController {
       })
 
       streamOptions = {
-        start: start,
-        end: end
+        start,
+        end
       }
     } else {
       // Return a stream from the media
@@ -115,6 +115,7 @@ export class WatchController {
     const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
     const forceTranscoding = req.query && !!req.query.transcode
 
+    // Check if it's chromecast or we force the transcoding
     if (isChromeCast || forceTranscoding) {
       if (isChromeCast) {
         this.logger.debug(`[${params._id}]: Device is chromecast`)
@@ -125,10 +126,11 @@ export class WatchController {
       }
 
       // Double check if it's needed
-      ffmpeg.ffprobe(mediaFileLocation, (err, metadata) => {
-        if (err) {
+      ffmpeg.ffprobe(mediaFileLocation, (ffprobeErr, metadata) => {
+        if (ffprobeErr) {
           // Send out normal response
           res.send(readStream)
+
         } else {
           const videoStream = metadata.streams.find(stream => stream.codec_type === 'video')
 
@@ -155,7 +157,7 @@ export class WatchController {
                 .format('matroska')
                 .addOption('-movflags', 'faststart')
                 .on('progress', progress => this.logger.debug(`[${params._id}]: ffmpeg processed until ${progress.timemark}`))
-                .on('error', err => this.logger.error(`[${params._id}] ffmpeg threw "${err.message || err}"`))
+                .on('error', ffmpegErr => this.logger.error(`[${params._id}] ffmpeg threw "${ffmpegErr.message || ffmpegErr}"`))
                 .pipe(null, { end: true })
             )
 

@@ -39,7 +39,7 @@ export class TorrentService {
   /**
    * Are we currently downloading in the background
    */
-  private backgroundDownloading: Boolean = false
+  private backgroundDownloading: boolean = false
 
   /**
    * Items currently downloading
@@ -461,11 +461,11 @@ export class TorrentService {
     // Delete the download
     download.delete()
 
-    const down = this.downloads.find(down => down._id === download._id)
+    const down = this.downloads.find(findDown => findDown._id === download._id)
 
     if (down) {
       // Remove from array
-      this.downloads = this.downloads.filter(down => down._id !== download._id)
+      this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
 
       this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length - 1}`)
     }
