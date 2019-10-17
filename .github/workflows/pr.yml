@@ -14,11 +14,11 @@ jobs:
         with:
           node-version: 10.x
 
-      - name: install
+      - name: Install dependencies
         run: yarn
 
-      - name: build
+      - name: Build the project
         run: yarn build
 
-      - name: lint
+      - name: Check Linting
         run: yarn lint
