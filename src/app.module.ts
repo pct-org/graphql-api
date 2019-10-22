@@ -45,7 +45,8 @@ import { WatchModule } from './watch/watch.module'
       useFactory: (configService: ConfigService) => ({
         uri: configService.databaseUri,
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useFindAndModify: false
       })
     }),
 
