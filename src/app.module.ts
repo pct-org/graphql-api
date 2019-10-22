@@ -50,19 +50,14 @@ import { WatchModule } from './watch/watch.module'
     }),
 
     // Enable Graphql
-    GraphQLModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        debug: configService.isDevelopment,
-        playground: configService.isDevelopment,
-        tracing: configService.isDevelopment,
-
-        installSubscriptionHandlers: true,
-        autoSchemaFile: 'schema.gql'
-      })
+    GraphQLModule.forRoot({
+      debug: true,
+      playground: true,
+      tracing: true,
+      installSubscriptionHandlers: true,
+      autoSchemaFile: 'schema.gql'
     })
-  ],
+  ]
 })
 export class AppModule {
 }
