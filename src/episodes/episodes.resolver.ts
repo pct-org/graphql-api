@@ -20,7 +20,7 @@ export class EpisodesResolver {
   }
 
   @ResolveProperty(type => Show)
-  show(@Parent() episode: Episode) {
+  show(@Parent() episode: Episode): Promise<Show> {
     return this.showsService.findOne({
       _id: episode.showImdbId
     })

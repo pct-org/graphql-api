@@ -22,7 +22,8 @@ export class SeasonsService {
         // limit: showsArgs.limit,
         sort: {
           number: 0 // Sort on season number
-        }
+        },
+        lean: true
       }
     )
   }

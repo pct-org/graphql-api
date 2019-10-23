@@ -11,7 +11,7 @@ export class SeasonsResolver {
   ) {}
 
   @ResolveProperty(type => [Episode])
-  episodes(@Parent() season: Season) {
+  episodes(@Parent() season: Season): Promise<Episode[]> {
     return this.episodesService.findAllForSeason(season.showImdbId, season.number)
   }
 

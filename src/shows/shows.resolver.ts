@@ -36,7 +36,7 @@ export class ShowsResolver {
    * Fetches all seasons for a show
    */
   @ResolveProperty(type => [Season])
-  seasons(@Parent() show: Show) {
+  seasons(@Parent() show: Show): Promise<Season[]> {
     return this.seasonsService.findAllForShow(show._id)
   }
 

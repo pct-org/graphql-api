@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { MongooseModule } from '@nestjs/mongoose'
-import { PubSub } from 'graphql-subscriptions'
 
 import { ConfigModule } from './shared/config/config.module'
 import { ConfigService } from './shared/config/config.service'

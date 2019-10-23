@@ -64,7 +64,8 @@ export class EpisodesService {
         // limit: showsArgs.limit,
         sort: {
           number: 0 // Sort on episode number
-        }
+        },
+        lean: true,
       }
     )
   }

@@ -18,13 +18,13 @@ export class ShowsService extends ContentService {
     super()
   }
 
-  async findOne(showArgs: ShowArgs): Promise<Show> {
+  findOne(showArgs: ShowArgs): Promise<Show> {
     return this.showModel.findById(
       showArgs._id
     )
   }
 
-  async findAll(contentArgs: ShowsArgs): Promise<Show[]> {
+  findAll(contentArgs: ShowsArgs): Promise<Show[]> {
     return this.showModel.find(
       this.getQuery(contentArgs),
       {},
