@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "6.8.3",
     "@nestjs/platform-fastify": "6.8.3",
     "@nestjs/serve-static": "^1.0.1",
-    "@pct-org/mongo-models": "^0.13.0",
+    "@pct-org/mongo-models": "^0.14.0",
     "apollo-server-fastify": "2.9.7",
     "dotenv": "8.2.0",
     "fastify-static": "^2.5.0",
