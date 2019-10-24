@@ -16,6 +16,24 @@ export class WatchController {
     private readonly torrentService: TorrentService
   ) {}
 
+  /**
+   * Get's all the files from a directory
+   * @param dir
+   */
+  private getFiles = (dir) => {
+    const filesInDirectory = fs.readdirSync(dir, { withFileTypes: true })
+
+    const files = filesInDirectory.map((file) => {
+      const res = path.resolve(dir, file.name)
+
+      return file.isDirectory()
+        ? this.getFiles(res)
+        : res
+    })
+
+    return Array.prototype.concat(...files)
+  }
+
   @Get('watch/:_id')
   watch(
     @Param() params,
@@ -23,10 +41,9 @@ export class WatchController {
     @Req() req
   ) {
     this.logger.debug(`[${params._id}]: Watch`)
-    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
 
     // Get all the files for this item
-    const files = fs.readdirSync(
+    const files = this.getFiles(
       path.resolve(
         this.configService.get(ConfigService.DOWNLOAD_LOCATION),
         params._id
@@ -44,14 +61,14 @@ export class WatchController {
       const formatIsSupported = !!this.torrentService.supportedFormats.find(format => current.includes(format))
 
       if (formatIsSupported) {
-        if (current.length > previous.length) {
+        if (!previous || current.length > previous.length) {
           return current
         }
       }
 
       return previous
 
-    }, files[0])
+    }, null)
 
     // Return 404 if we did not find a media file
     if (!mediaFile) {
@@ -59,14 +76,7 @@ export class WatchController {
       return res.send()
     }
 
-    // Get the full location of the media file
-    const mediaFileLocation = path.resolve(
-      this.configService.get(ConfigService.DOWNLOAD_LOCATION),
-      params._id,
-      mediaFile
-    )
-
-    const { size: mediaSize } = fs.statSync(mediaFileLocation)
+    const { size: mediaSize } = fs.statSync(mediaFile)
 
     let streamOptions = null
 
@@ -107,9 +117,12 @@ export class WatchController {
       })
     }
 
+    // Check if we have this item downloading atm
+    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
+
     const readStream = torrent
       ? torrent.file.createReadStream(streamOptions)
-      : fs.createReadStream(mediaFileLocation, streamOptions)
+      : fs.createReadStream(mediaFile, streamOptions)
 
     // Check if the device is chromecast
     const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
@@ -126,7 +139,7 @@ export class WatchController {
       }
 
       // Double check if it's needed
-      ffmpeg.ffprobe(mediaFileLocation, (ffprobeErr, metadata) => {
+      ffmpeg.ffprobe(mediaFile, (ffprobeErr, metadata) => {
         if (ffprobeErr) {
           // Send out normal response
           res.send(readStream)
@@ -150,7 +163,7 @@ export class WatchController {
           // hevc vidoe never works
 
           // We need to transform it
-          if (forceTranscoding && ['hevc'].includes(videoStream.codec_name)) {
+          if (forceTranscoding || ['hevc'].includes(videoStream.codec_name)) {
             // Improve the output stream so Chromecast can play it
             res.send(
               ffmpeg(readStream)
