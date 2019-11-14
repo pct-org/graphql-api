@@ -330,10 +330,10 @@
     consola "^2.3.0"
     node-fetch "^2.3.0"
 
-"@pct-org/mongo-models@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-0.14.0.tgz#76d4a57f33761724b45cca3721f5cbfd3f095b73"
-  integrity sha512-bszIJ43bzblIGT/GMzdizaNLZPDbD+vAhOz6XaOFs9OVmO9iYk+T7EF4Tf1MColR/QRPxsN26Gd6cIjH2K2hIA==
+"@pct-org/mongo-models@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-0.15.0.tgz#039050d7f6d84d7419bf90308fa3a77312a454e1"
+  integrity sha512-k39opFNg7jLnoZXIdSpwUFwBUcUIXJXDyu8RNh/VJ0r6UDFbJSmRj/jvtc/ra/cdy9LQsIPijRAHjA592XeQpw==
   dependencies:
     graphql "14.5.8"
     mongoose "5.7.5"
