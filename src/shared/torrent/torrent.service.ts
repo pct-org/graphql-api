@@ -384,6 +384,9 @@ export class TorrentService {
         // Remove from torrents
         this.removeFromTorrents(download)
 
+        // Remove from the queue as the item is downloaded
+        this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+
         await this.updateOne(download, {
           progress: 100,
           status: TorrentService.STATUS_COMPLETE,

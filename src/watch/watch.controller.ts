@@ -42,13 +42,13 @@ export class WatchController {
   ) {
     this.logger.debug(`[${params._id}]: Watch`)
 
-    // Get all the files for this item
-    const files = this.getFiles(
-      path.resolve(
-        this.configService.get(ConfigService.DOWNLOAD_LOCATION),
-        params._id
-      )
+    const folderLocation = path.resolve(
+      this.configService.get(ConfigService.DOWNLOAD_LOCATION),
+      params._id
     )
+
+    // Get all the files for this item
+    const files = this.getFiles(folderLocation)
 
     // There are no files
     if (files.length === 0) {
@@ -120,9 +120,13 @@ export class WatchController {
     // Check if we have this item downloading atm
     const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
 
-    const readStream = torrent
-      ? torrent.file.createReadStream(streamOptions)
-      : fs.createReadStream(mediaFile, streamOptions)
+    if (torrent) {
+      // TODO:: Test if this is still working as it should
+      // Create readStream for torrent to make start end bytes priority
+      torrent.file.createReadStream(streamOptions)
+    }
+
+    const readStream = fs.createReadStream(mediaFile, streamOptions)
 
     // Check if the device is chromecast
     const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
