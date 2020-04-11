@@ -1,4 +1,4 @@
-import { Args, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Show, Season } from '@pct-org/mongo-models'
 
@@ -35,7 +35,7 @@ export class ShowsResolver {
   /**
    * Fetches all seasons for a show
    */
-  @ResolveProperty(type => [Season])
+  @ResolveField(type => [Season])
   seasons(@Parent() show: Show): Promise<Season[]> {
     return this.seasonsService.findAllForShow(show._id)
   }

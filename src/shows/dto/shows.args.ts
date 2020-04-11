@@ -1,4 +1,4 @@
-import { ArgsType } from 'type-graphql'
+import { ArgsType } from '@nestjs/graphql'
 
 import { ContentsArgs } from '../../shared/content/dto/contents.args'
 

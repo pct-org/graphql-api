@@ -1,4 +1,4 @@
-import { Args, Parent, Query, ResolveProperty, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver, Mutation } from '@nestjs/graphql'
 import { Movie, Episode, Download } from '@pct-org/mongo-models'
 
 import { DownloadsArgs } from './dto/downloads.args'
@@ -148,7 +148,7 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to fetch the movie for
    */
-  @ResolveProperty(type => Movie, { description: 'The movie of this download, only if itemType === "movie"' })
+  @ResolveField(type => Movie, { description: 'The movie of this download, only if itemType === "movie"' })
   movie(@Parent() download) {
     if (download.itemType !== 'movie') {
       return null
@@ -162,7 +162,7 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to fetch the episode for
    */
-  @ResolveProperty(type => Episode, { description: 'The episode of this download, only if itemType === "episode"' })
+  @ResolveField(type => Episode, { description: 'The episode of this download, only if itemType === "episode"' })
   episode(@Parent() download) {
     if (download.itemType !== 'episode') {
       return null
@@ -176,7 +176,7 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to format it on
    */
-  @ResolveProperty(type => String)
+  @ResolveField(type => String)
   speed(@Parent() download) {
     return formatKbToString(download.speed)
   }
@@ -186,7 +186,7 @@ export class DownloadsResolver {
    *
    * @param {Download} download - The download to format it on
    */
-  @ResolveProperty(type => String)
+  @ResolveField(type => String)
   timeRemaining(@Parent() download) {
     return formatMsToRemaining(download.timeRemaining)
   }

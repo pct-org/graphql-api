@@ -1,4 +1,4 @@
-import { Parent, ResolveProperty, Resolver } from '@nestjs/graphql'
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { Season, Episode } from '@pct-org/mongo-models'
 
 import { EpisodesService } from '../episodes/episodes.service'
@@ -10,7 +10,7 @@ export class SeasonsResolver {
     private readonly episodesService: EpisodesService
   ) {}
 
-  @ResolveProperty(type => [Episode])
+  @ResolveField(type => [Episode])
   episodes(@Parent() season: Season): Promise<Episode[]> {
     return this.episodesService.findAllForSeason(season.showImdbId, season.number)
   }

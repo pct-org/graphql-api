@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { spawn } from 'child_process'
 import { Controller, Get, Res, Req, Param, Logger } from '@nestjs/common'
 import * as ffmpeg from 'fluent-ffmpeg'
 
@@ -58,7 +59,9 @@ export class WatchController {
 
     // Get the correct media file
     const mediaFile = files.reduce((previous, current, index) => {
-      const formatIsSupported = !!this.torrentService.supportedFormats.find(format => current.includes(format))
+      const formatIsSupported = !!this.torrentService.supportedFormats.find(format => (
+        current.includes(format) && !current.includes('transcoding')
+      ))
 
       if (formatIsSupported) {
         if (!previous || current.length > previous.length) {
@@ -81,7 +84,7 @@ export class WatchController {
     let streamOptions = null
 
     // If we have range then we need to start somewhere else
-    if (req.headers.range) {
+    if (req.headers.range && false) {
       const parts = req.headers.range
         .replace(/bytes=/, '')
         .split('-')
@@ -112,7 +115,7 @@ export class WatchController {
       // Return a stream from the media
       res.status(200)
       res.headers({
-        'Content-Length': mediaSize,
+        // 'Content-Length': mediaSize,
         'Content-Type': 'video/mp4'
       })
     }
@@ -128,65 +131,7 @@ export class WatchController {
 
     const readStream = fs.createReadStream(mediaFile, streamOptions)
 
-    // Check if the device is chromecast
-    const isChromeCast = req.query && req.query.device && req.query.device === 'chromecast'
-    const forceTranscoding = req.query && !!req.query.transcode
-
-    // Check if it's chromecast or we force the transcoding
-    if (isChromeCast || forceTranscoding) {
-      if (isChromeCast) {
-        this.logger.debug(`[${params._id}]: Device is chromecast`)
-      }
-
-      if (forceTranscoding) {
-        this.logger.debug(`[${params._id}]: Force transcoding`)
-      }
-
-      // Double check if it's needed
-      ffmpeg.ffprobe(mediaFile, (ffprobeErr, metadata) => {
-        if (ffprobeErr) {
-          // Send out normal response
-          res.send(readStream)
-
-        } else {
-          const videoStream = metadata.streams.find(stream => stream.codec_type === 'video')
-
-          this.logger.debug(`[${params._id}]: Stream metadata ${JSON.stringify(metadata)}`)
-
-          // Thoughts: h264 && level = 31 does not work
-
-          // Thoughts: h264 && profile = Main works
-
-          // Thoughts: h264 && profile = High && ENCODER: 'Lavf58.31.101' works
-          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.9 + libmatroska v1.5.2', works
-          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.3 + libmatroska v1.4.4', works
-
-          // Thoughts: h264 && profile = Main && encoder: 'libebml v1.3.6 + libmatroska v1.4.9', works
-          // Thoughts: h264 && profile = High && encoder: 'libebml v1.3.6 + libmatroska v1.4.9', does not work
-
-          // hevc vidoe never works
-
-          // We need to transform it
-          if (forceTranscoding || ['hevc'].includes(videoStream.codec_name)) {
-            // Improve the output stream so Chromecast can play it
-            res.send(
-              ffmpeg(readStream)
-                .format('matroska')
-                .addOption('-movflags', 'faststart')
-                .on('progress', progress => this.logger.debug(`[${params._id}]: ffmpeg processed until ${progress.timemark}`))
-                .on('error', ffmpegErr => this.logger.error(`[${params._id}] ffmpeg threw "${ffmpegErr.message || ffmpegErr}"`))
-                .pipe(null, { end: true })
-            )
-
-          } else {
-            res.send(readStream)
-          }
-        }
-      })
-
-    } else {
-      res.send(readStream)
-    }
+    res.send(readStream)
   }
 
 }
