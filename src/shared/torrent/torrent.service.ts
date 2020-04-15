@@ -335,9 +335,9 @@ export class TorrentService {
       torrent.on('download', async () => {
         const newProgress = torrent.progress * 100
 
-        // Only update every 0.2 %
+        // Only update every 1 %
         if (lastUpdate.progress === null
-          || (lastUpdate.progress + 0.2) < newProgress
+          || (lastUpdate.progress + 1) < newProgress
           || lastUpdate.numPeers !== torrent.numPeers
         ) {
           this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
@@ -470,7 +470,7 @@ export class TorrentService {
       // Remove from array
       this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
 
-      this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length - 1}`)
+      this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
     }
 
     // Remove the download folder

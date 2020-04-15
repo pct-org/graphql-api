@@ -53,7 +53,6 @@ import { WatchModule } from './watch/watch.module'
     GraphQLModule.forRoot({
       debug: true,
       playground: true,
-      tracing: true,
       installSubscriptionHandlers: true,
       autoSchemaFile: 'schema.gql'
     })
