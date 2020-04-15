@@ -1,6 +1,7 @@
-import { LogLevel } from '@nestjs/common'
+import { Logger, LogLevel } from '@nestjs/common'
 import * as dotenv from 'dotenv'
 import * as Joi from '@hapi/joi'
+import * as cluster from 'cluster'
 
 import * as fs from 'fs'
 
@@ -11,6 +12,8 @@ export interface EnvConfig {
 }
 
 export class ConfigService {
+
+  private static readonly logger = new Logger(ConfigService.name)
 
   public static readonly NODE_ENV: string = 'NODE_ENV'
   public static readonly PORT: string = 'PORT'
@@ -76,6 +79,31 @@ export class ConfigService {
     return ['log', 'error', 'warn']
   }
 
+  static clusterize(callback: Function): void {
+    if (cluster.isMaster) {
+      this.logger.log(`Master is running (${process.pid}) `)
+
+      // We want to run it twice
+      const firstWorker = cluster.fork()
+      const secondWorker = cluster.fork()
+
+      cluster.on('exit', (worker, code, signal) => {
+        this.logger.error(`worker ${worker.process.pid} died`)
+        cluster.fork()
+      })
+
+      setTimeout(() => {
+        firstWorker.send({ start: 'torrentService.init' })
+      }, 10000)
+
+      secondWorker.on('message', (message) => {
+        firstWorker.send(message)
+      })
+    } else {
+      callback()
+    }
+  }
+
   /**
    * Ensures all needed variables are set, and returns the validated JavaScript object
    * including the applied default values.
@@ -83,7 +111,7 @@ export class ConfigService {
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       [ConfigService.NODE_ENV]: Joi.string()
-      // .valid(['development', 'production', 'test', 'provision'])
+        // .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
 
       [ConfigService.PORT]: Joi.number()

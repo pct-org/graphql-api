@@ -51,6 +51,8 @@ export class TorrentService {
    */
   private webTorrent: WebTorrentInstance = null
 
+  private hasService: boolean = false
+
   /**
    * All the different supported formats
    */
@@ -62,17 +64,42 @@ export class TorrentService {
     @InjectModel('Downloads') private readonly downloadModel: Model<Download>,
     private readonly configService: ConfigService
   ) {
-    this.webTorrent = new WebTorrent({ maxConns: 20 })
-    this.webTorrent.on('error', (error) => {
-      this.logger.error(`[webTorrent]: ${JSON.stringify(error)}`)
+    process.on('message', ({ start, download }) => {
+      switch (start) {
+        case 'torrentService.init':
+          this.hasService = true
 
-      // Create a new one so others can continue
-      this.webTorrent = new WebTorrent({ maxConns: 20 })
-      this.checkForIncompleteDownloads()
+          this.webTorrent = new WebTorrent({ maxConns: 20 })
+          this.webTorrent.on('error', (error) => {
+            this.logger.error(`[webTorrent]: ${JSON.stringify(error)}`)
+
+            // Create a new one so others can continue
+            this.webTorrent = new WebTorrent({ maxConns: 20 })
+            this.checkForIncompleteDownloads(true)
+          })
+
+          // Check for incomplete downloads and add them to the downloads
+          this.checkForIncompleteDownloads(true)
+
+          setTimeout(() => {
+            this.checkForIncompleteDownloads()
+          }, 10000)
+          break
+
+        case 'torrentService.addDownload':
+          this.addDownload(download)
+          break
+
+        case 'torrentService.stopDownloading':
+          this.stopDownloading(download)
+          break
+
+        case 'torrentService.startDownloads':
+          this.startDownloads()
+
+          break
+      }
     })
-
-    // Check for incomplete downloads and add them to the downloads
-    this.checkForIncompleteDownloads()
   }
 
   /**
@@ -93,6 +120,12 @@ export class TorrentService {
    */
   public stopDownloading(download: Download): Promise<any> {
     return new Promise((resolve) => {
+      if (!this.hasService) {
+        process.send({ start: 'torrentService.stopDownloading', download })
+
+        return resolve()
+      }
+
       // Get the stream
       const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
 
@@ -123,6 +156,12 @@ export class TorrentService {
    * Adds a download to the queued items
    */
   public addDownload(download: Download) {
+    if (!this.hasService) {
+      process.send({ start: 'torrentService.addDownload', download })
+
+      return
+    }
+
     this.downloads.push(download)
 
     this.logger.log(`[${download._id}]: Added to queue, new size: ${this.downloads.length}`)
@@ -132,6 +171,12 @@ export class TorrentService {
    * Starts background downloads
    */
   public async startDownloads() {
+    if (!this.hasService) {
+      process.send({ start: 'torrentService.startDownloads' })
+
+      return
+    }
+
     if (this.backgroundDownloading || this.downloads.length === 0) {
       return
     }
@@ -156,7 +201,7 @@ export class TorrentService {
   /**
    * Set's the downloads that still needs to be done or completed
    */
-  private async checkForIncompleteDownloads() {
+  private async checkForIncompleteDownloads(start = false) {
     this.downloads = await this.downloadModel.find({
       status: {
         $in: [
@@ -169,9 +214,10 @@ export class TorrentService {
 
     // TODO:: Do something with streams?
 
-    this.logger.log(`Found ${this.downloads.length} downloads`)
-
-    // this.startDownloads()
+    if (start) {
+      this.logger.log(`Found ${this.downloads.length} downloads`)
+      this.startDownloads()
+    }
   }
 
   /**

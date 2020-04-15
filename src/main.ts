@@ -28,4 +28,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap()
+ConfigService.clusterize(bootstrap)
