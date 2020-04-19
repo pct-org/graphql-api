@@ -335,9 +335,9 @@ export class TorrentService {
       torrent.on('download', async () => {
         const newProgress = torrent.progress * 100
 
-        // Only update every 1 %
+        // Only update every 0.5 %
         if (lastUpdate.progress === null
-          || (lastUpdate.progress + 1) < newProgress
+          || (lastUpdate.progress + 0.5) < newProgress
           || lastUpdate.numPeers !== torrent.numPeers
         ) {
           this.logger.debug(`[${download._id}]: Progress ${newProgress.toFixed(1)}% at ${formatKbToString(torrent.downloadSpeed)}`)
