@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpService, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
@@ -6,6 +6,7 @@ import { Movie, Show, Episode } from '@pct-org/mongo-models'
 
 import { ConfigService } from '../shared/config/config.service'
 import { Status } from './status.object-type'
+import { StatusScraper } from './status-scraper.object-type'
 
 @Injectable()
 export class StatusService {
@@ -17,7 +18,8 @@ export class StatusService {
     private readonly showModel: Model<Show>,
     @InjectModel('Episodes')
     private readonly episodesModel: Model<Episode>,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService
   ) {}
 
   async getStatus(): Promise<Status> {
@@ -26,6 +28,29 @@ export class StatusService {
       totalMovies: this.movieModel.countDocuments(),
       totalShows: this.showModel.countDocuments(),
       totalEpisodes: this.episodesModel.countDocuments()
+    }
+  }
+
+  async getScraperStatus(): Promise<StatusScraper> {
+    try {
+      const response = await this.httpService.get(
+        `${this.configService.get('SCRAPER_URL')}/status`
+      ).toPromise()
+
+      return {
+        version: response.data.version,
+        status: response.data.status,
+        updated: response.data.updated,
+        uptime: response.data.uptime
+      }
+
+    } catch (e) {
+      return {
+        version: 'unknown',
+        status: 'offline',
+        updated: 'unknown',
+        uptime: 0
+      }
     }
   }
 
