@@ -171,7 +171,7 @@ export class TorrentService {
 
     this.logger.log(`Found ${this.downloads.length} downloads`)
 
-    // this.startDownloads()
+    this.startDownloads()
   }
 
   /**
