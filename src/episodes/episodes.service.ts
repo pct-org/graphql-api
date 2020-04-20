@@ -45,10 +45,8 @@ export class EpisodesService {
   }
 
   findOne(_id: string): Promise<Episode[]> {
-    return this.episodeModel.find(
-      {
-        _id
-      }
+    return this.episodeModel.findById(
+      _id
     )
   }
 
@@ -65,7 +63,7 @@ export class EpisodesService {
         sort: {
           number: 0 // Sort on episode number
         },
-        lean: true,
+        lean: true
       }
     )
   }
