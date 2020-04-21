@@ -7,6 +7,7 @@ import { Movie, Show, Episode } from '@pct-org/mongo-models'
 import { ConfigService } from '../shared/config/config.service'
 import { Status } from './status.object-type'
 import { StatusScraper } from './status-scraper.object-type'
+import { formatMsToRemaining } from '../shared/utils'
 
 @Injectable()
 export class StatusService {
@@ -41,15 +42,15 @@ export class StatusService {
         version: response.data.version,
         status: response.data.status,
         updated: response.data.updated,
-        uptime: response.data.uptime
+        uptime: formatMsToRemaining(response.data.uptime * 1000)
       }
 
     } catch (e) {
       return {
         version: 'unknown',
-        status: 'offline',
+        status: `offline - ${e.message || e}`,
         updated: 'unknown',
-        uptime: 0
+        uptime: 'unknown'
       }
     }
   }

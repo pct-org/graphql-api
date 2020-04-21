@@ -13,6 +13,6 @@ export class StatusScraper {
   updated: string
 
   @Field({ description: 'The time the scraper is online.' })
-  uptime: number
+  uptime: string
 
 }
