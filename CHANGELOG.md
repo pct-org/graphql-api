@@ -1,4 +1,13 @@
-# 0.6.0 (2020-04-26)
+## [0.6.1](https://github.com/pct-org/graphql-api/compare/v0.6.0...v0.6.1) (2020-04-26)
+
+
+### Bug Fixes
+
+* Fixed downloadQuality not being filled ([ca55528](https://github.com/pct-org/graphql-api/commit/ca555282cba1f0fcf7f5e606e5473ae1f8198bbb))
+
+
+
+# [0.6.0](https://github.com/pct-org/graphql-api/compare/2c8b7e5af08af2c04c30f15f6a1d5e3f7c1be343...v0.6.0) (2020-04-26)
 
 
 ### Bug Fixes
