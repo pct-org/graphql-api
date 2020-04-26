@@ -1,3 +1,7 @@
+## [0.6.2](https://github.com/pct-org/graphql-api/compare/v0.6.1...v0.6.2) (2020-04-26)
+
+
+
 ## [0.6.1](https://github.com/pct-org/graphql-api/compare/v0.6.0...v0.6.1) (2020-04-26)
 
 
