@@ -33,7 +33,9 @@ export class EpisodesService {
         firstAired: {
           $gt: eightDaysAgo,
           $lt: today
-        }
+        },
+        torrents: { $exists: true },
+        $where: 'this.torrents.length > 0'
       },
       {},
       {
