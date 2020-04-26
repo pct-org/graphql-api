@@ -416,7 +416,7 @@ export class TorrentService {
   }
 
   /**
-   * Updates download item in the databse
+   * Updates download item in the database
    *
    * @param item
    * @param update

@@ -67,6 +67,7 @@ export class DownloadsResolver {
       {
         download: {
           downloadStatus: TorrentService.STATUS_QUEUED,
+          downloadQuality: quality,
           downloading: true
         }
       }
