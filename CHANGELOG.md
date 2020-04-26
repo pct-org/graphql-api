@@ -1,3 +1,12 @@
+## [0.6.3](https://github.com/pct-org/graphql-api/compare/v0.6.2...v0.6.3) (2020-04-26)
+
+
+### Bug Fixes
+
+* Fixes in mongo models ([ef99c81](https://github.com/pct-org/graphql-api/commit/ef99c819ee2928256fd6ec5f3f6e819240ed9067))
+
+
+
 ## [0.6.2](https://github.com/pct-org/graphql-api/compare/v0.6.1...v0.6.2) (2020-04-26)
 
 
