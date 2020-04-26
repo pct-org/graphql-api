@@ -101,6 +101,7 @@ export class DownloadsResolver {
             download: {
               downloadedOn: null,
               downloadStatus: null,
+              downloadQuality: null,
               downloading: false,
               downloadComplete: false
             }
