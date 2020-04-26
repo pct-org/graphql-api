@@ -54,7 +54,8 @@ import { WatchModule } from './watch/watch.module'
       debug: true,
       playground: true,
       installSubscriptionHandlers: true,
-      autoSchemaFile: 'schema.gql'
+      autoSchemaFile: 'schema.gql',
+      introspection: true
     })
   ]
 })
