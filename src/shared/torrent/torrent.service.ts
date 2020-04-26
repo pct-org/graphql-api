@@ -424,14 +424,12 @@ export class TorrentService {
   public async updateOne(item: Model<Download | Movie | Episode>, update): Promise<Download | Movie | Episode> {
     // Apply the update
     if (Object.keys(update).length === 1 && update.hasOwnProperty('download')) {
-      if (!item.hasOwnProperty('download')) {
-        item.download = {}
-      }
-
       this.logger.debug(`[${item._id}]: Update download info to "${JSON.stringify(update.download)}"`)
 
-      // Update the download keys of the item
-      Object.keys(update.download).forEach((key) => item.download[key] = update.download[key])
+      item.download = {
+        ...item.download,
+        ...update.download,
+      }
 
     } else {
       Object.keys(update).forEach((key) => item[key] = update[key])

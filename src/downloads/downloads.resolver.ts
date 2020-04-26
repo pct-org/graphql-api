@@ -52,14 +52,6 @@ export class DownloadsResolver {
       quality
     })
 
-    this.torrentService.addDownload(download)
-
-    // Add the download to the queue
-    if (type !== TorrentService.TYPE_STREAM) {
-      // Start the queue
-      this.torrentService.startDownloads()
-    }
-
     const item = await this.torrentService.getItemForDownload(download)
 
     await this.torrentService.updateOne(
@@ -72,6 +64,14 @@ export class DownloadsResolver {
         }
       }
     )
+
+    this.torrentService.addDownload(download)
+
+    // Add the download to the queue
+    if (type !== TorrentService.TYPE_STREAM) {
+      // Start the queue
+      this.torrentService.startDownloads()
+    }
 
     return download
   }
