@@ -1,3 +1,12 @@
+## [0.6.4](https://github.com/pct-org/graphql-api/compare/v0.6.3...v0.6.4) (2020-04-26)
+
+
+### Bug Fixes
+
+* Put download quality to null when removed ([0b09ebb](https://github.com/pct-org/graphql-api/commit/0b09ebb6abfbfcffe854a7dcd335daf8ee85d513))
+
+
+
 ## [0.6.3](https://github.com/pct-org/graphql-api/compare/v0.6.2...v0.6.3) (2020-04-26)
 
 
