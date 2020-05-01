@@ -62,17 +62,30 @@ export class TorrentService {
     @InjectModel('Downloads') private readonly downloadModel: Model<Download>,
     private readonly configService: ConfigService
   ) {
+    this.setupWebTorrent()
+
+    // Check for incomplete downloads and add them to the downloads
+    this.checkForIncompleteDownloads()
+  }
+
+  /**
+   * Sets up web torrent client
+   *
+   * @param wasCrash
+   */
+  private setupWebTorrent(wasCrash = false) {
     this.webTorrent = new WebTorrent({ maxConns: 20 })
     this.webTorrent.on('error', (error) => {
       this.logger.error(`[webTorrent]: ${JSON.stringify(error)}`)
 
-      // Create a new one so others can continue
-      this.webTorrent = new WebTorrent({ maxConns: 20 })
-      this.checkForIncompleteDownloads()
+      this.backgroundDownloading = false
+      this.setupWebTorrent(true)
     })
 
-    // Check for incomplete downloads and add them to the downloads
-    this.checkForIncompleteDownloads()
+    // We are recreating from a crash so also start the downloads again
+    if (wasCrash) {
+      this.startDownloads()
+    }
   }
 
   /**
