@@ -70,7 +70,7 @@ export class EpisodesService {
     )
   }
 
-  findAllWithIDS(ids: String[]): Promise<Episode[]> {
+  findAllWithIDS(ids: string[]): Promise<Episode[]> {
     return this.episodeModel.find(
       {
         _id: {

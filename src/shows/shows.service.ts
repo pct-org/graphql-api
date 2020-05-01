@@ -38,7 +38,7 @@ export class ShowsService extends ContentService {
   /**
    * Formats the id's from downloads so we can get
    * all the shows / seasons / episodes that are downloaded
-
+   *
    * @param {array<Download>} downloads - Downloads from mongo db
    */
   getShowIDsFromDownloads(downloads: Download[]) {
@@ -49,7 +49,7 @@ export class ShowsService extends ContentService {
       .forEach((download) => {
         const ids = download._id.split('-')
         const showId = ids.shift()
-        const season = ids.shift()
+        const seasonNr = ids.shift()
 
         // Check if the show is already added
         const showExists = shows.find(item => item._id === showId)
@@ -60,7 +60,7 @@ export class ShowsService extends ContentService {
             _id: showId,
             createdAt: download.createdAt,
             seasons: [{
-              _id: `${showId}-${season}`,
+              _id: `${showId}-${seasonNr}`,
               episodes: [{
                 _id: download._id
               }]
@@ -70,7 +70,7 @@ export class ShowsService extends ContentService {
           // Show exists so let's update it
           shows = shows.map((show) => {
             if (show._id === showId) {
-              const seasonId = `${showId}-${season}`
+              const seasonId = `${showId}-${seasonNr}`
               const seasonExists = show.seasons.find(({ _id }) => _id === seasonId)
 
               let seasons = show.seasons
