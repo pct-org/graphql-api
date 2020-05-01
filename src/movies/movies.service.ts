@@ -18,7 +18,11 @@ export class MoviesService extends ContentService {
 
   findOne(movieArgs: MovieArgs): Promise<Movie> {
     return this.movieModel.findById(
-      movieArgs._id
+      movieArgs._id,
+      {},
+      {
+        lean: true
+      }
     )
   }
 
