@@ -16,12 +16,12 @@ export class MoviesService extends ContentService {
     super()
   }
 
-  findOne(movieArgs: MovieArgs): Promise<Movie> {
+  findOne(movieArgs: MovieArgs, lean: boolean = false): Promise<Movie> {
     return this.movieModel.findById(
       movieArgs._id,
       {},
       {
-        lean: true
+        lean: false
       }
     )
   }

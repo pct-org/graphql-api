@@ -3,7 +3,7 @@
   "extensions": {
     "endpoints": {
       "introspect": true,
-      "dev": "http://localhost:3000/graphql"
+      "dev": "http://localhost:5000/graphql"
     }
   }
 }

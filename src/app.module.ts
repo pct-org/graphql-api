@@ -15,6 +15,7 @@ import { SeasonsModule } from './seasons/seasons.module'
 import { BookmarksModule } from './bookmarks/bookmarks.module'
 import { DownloadsModule } from './downloads/downloads.module'
 import { EpisodesModule } from './episodes/episodes.module'
+import { ProgressModule } from './progress/progress.module'
 
 import { WatchModule } from './watch/watch.module'
 
@@ -33,6 +34,7 @@ import { WatchModule } from './watch/watch.module'
     BookmarksModule,
     DownloadsModule,
     EpisodesModule,
+    ProgressModule,
 
     // Rest
     WatchModule,
