@@ -84,7 +84,7 @@ export class WatchController {
     let streamOptions = null
 
     // If we have range then we need to start somewhere else
-    if (req.headers.range && false) {
+    if (req.headers.range) {
       const parts = req.headers.range
         .replace(/bytes=/, '')
         .split('-')
