@@ -1,3 +1,18 @@
+# [0.7.0](https://github.com/pct-org/graphql-api/compare/v0.6.5...v0.7.0) (2020-05-04)
+
+
+### Bug Fixes
+
+* Fixed that when WebTorrent crashes it does not continue ([aa35d4f](https://github.com/pct-org/graphql-api/commit/aa35d4f6eb090745e6f61628bda36d2bb0dacd00))
+
+
+### Features
+
+* Added next update to scraper status call ([b2221b5](https://github.com/pct-org/graphql-api/commit/b2221b5391b8c20c2c024b46882428b05565d07b))
+* Added the option to shows to only get downloaded items ([273dc27](https://github.com/pct-org/graphql-api/commit/273dc27aabff704199b38f031cafdb241d21b83a))
+
+
+
 ## [0.6.5](https://github.com/pct-org/graphql-api/compare/v0.6.4...v0.6.5) (2020-04-26)
 
 
@@ -26,15 +41,6 @@
 
 
 ## [0.6.2](https://github.com/pct-org/graphql-api/compare/v0.6.1...v0.6.2) (2020-04-26)
-
-
-
-## [0.6.1](https://github.com/pct-org/graphql-api/compare/v0.6.0...v0.6.1) (2020-04-26)
-
-
-### Bug Fixes
-
-* Fixed downloadQuality not being filled ([ca55528](https://github.com/pct-org/graphql-api/commit/ca555282cba1f0fcf7f5e606e5473ae1f8198bbb))
 
 
 
