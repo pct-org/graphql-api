@@ -1,3 +1,17 @@
+# [0.8.0](https://github.com/pct-org/graphql-api/compare/v0.7.0...v0.8.0) (2020-05-04)
+
+
+### Bug Fixes
+
+* Fixed seeking not working ([868f243](https://github.com/pct-org/graphql-api/commit/868f243f438ee5b559f1fb237688b3f4d45b329d))
+
+
+### Features
+
+* Added progress tracking ([17dd9d2](https://github.com/pct-org/graphql-api/commit/17dd9d24679dd6b684b0238e6561bc890af919ef))
+
+
+
 # [0.7.0](https://github.com/pct-org/graphql-api/compare/v0.6.5...v0.7.0) (2020-05-04)
 
 
@@ -37,10 +51,6 @@
 ### Bug Fixes
 
 * Fixes in mongo models ([ef99c81](https://github.com/pct-org/graphql-api/commit/ef99c819ee2928256fd6ec5f3f6e819240ed9067))
-
-
-
-## [0.6.2](https://github.com/pct-org/graphql-api/compare/v0.6.1...v0.6.2) (2020-04-26)
 
 
 
