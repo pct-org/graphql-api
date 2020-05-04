@@ -4,7 +4,7 @@ import { Movie, Episode } from '@pct-org/mongo-models'
 import { MoviesService } from '../movies/movies.service'
 import { EpisodesService } from '../episodes/episodes.service'
 
-export const ProgressUnion = createUnionType({
+export const progressUnion = createUnionType({
   name: 'Progress',
   types: () => [Movie, Episode],
   resolveType(value) {
@@ -27,7 +27,7 @@ export class ProgressResolver {
     private readonly episodesService: EpisodesService
   ) {}
 
-  @Mutation(returns => ProgressUnion)
+  @Mutation(returns => progressUnion)
   async progress(
     @Args('_id') _id: string,
     @Args('type') type: string,
@@ -43,8 +43,8 @@ export class ProgressResolver {
     }
 
     if (item) {
-      let newWatched = {
-        progress: progress,
+      const newWatched = {
+        progress,
         complete: item.watched.complete
       }
 
