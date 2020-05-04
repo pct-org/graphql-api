@@ -70,4 +70,23 @@ export class EpisodesService {
     )
   }
 
+  findAllWithIDS(ids: string[]): Promise<Episode[]> {
+    return this.episodeModel.find(
+      {
+        _id: {
+          $in: ids
+        }
+      },
+      {},
+      {
+        // skip: showsArgs.offset,
+        // limit: showsArgs.limit,
+        sort: {
+          number: 0 // Sort on episode number
+        },
+        lean: true
+      }
+    )
+  }
+
 }

@@ -28,4 +28,21 @@ export class SeasonsService {
     )
   }
 
+  findOne(_id: string): Promise<Season[]> {
+    return this.seasonModel.findOne(
+      {
+        _id
+      },
+      {},
+      {
+        // skip: showsArgs.offset,
+        // limit: showsArgs.limit,
+        sort: {
+          number: 0 // Sort on season number
+        },
+        lean: true
+      }
+    )
+  }
+
 }

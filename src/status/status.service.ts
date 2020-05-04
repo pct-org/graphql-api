@@ -42,6 +42,7 @@ export class StatusService {
         version: response.data.version,
         status: response.data.status,
         updated: response.data.updated,
+        nextUpdate: response.data.nextUpdate,
         uptime: formatMsToRemaining(response.data.uptime * 1000)
       }
 
@@ -50,6 +51,7 @@ export class StatusService {
         version: 'unknown',
         status: `offline - ${e.message || e}`,
         updated: 'unknown',
+        nextUpdate: 'unknown',
         uptime: 'unknown'
       }
     }

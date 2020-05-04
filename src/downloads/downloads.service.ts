@@ -53,4 +53,13 @@ export class DownloadsService {
     )
   }
 
+  /**
+   * Get all downloads
+   */
+  getAllEpisodes(): Promise<Download[]> {
+    return this.downloadModel.find({
+      itemType: 'episode'
+    })
+  }
+
 }
