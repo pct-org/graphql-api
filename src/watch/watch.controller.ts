@@ -79,6 +79,8 @@ export class WatchController {
       return res.send()
     }
 
+    const isChromeCast = req?.query?.device === 'chromecast' ?? false
+
     const { size: mediaSize } = fs.statSync(mediaFile)
 
     let streamOptions = null
@@ -99,7 +101,7 @@ export class WatchController {
 
       const chunkSize = (end - start) + 1
 
-      res.status(206)
+      res.status(isChromeCast ? 200 : 206)
       res.headers({
         'Content-Range': 'bytes ' + start + '-' + end + '/' + chunkSize,
         'Accept-Ranges': 'bytes',
