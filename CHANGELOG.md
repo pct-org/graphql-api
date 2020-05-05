@@ -1,3 +1,12 @@
+## [0.8.1](https://github.com/pct-org/graphql-api/compare/v0.8.0...v0.8.1) (2020-05-05)
+
+
+### Bug Fixes
+
+* Fixed seeking for chromecast ([c4accf4](https://github.com/pct-org/graphql-api/commit/c4accf42c3b405f40f65298b0033ad900512ecee))
+
+
+
 # [0.8.0](https://github.com/pct-org/graphql-api/compare/v0.7.0...v0.8.0) (2020-05-04)
 
 
@@ -42,15 +51,6 @@
 ### Bug Fixes
 
 * Put download quality to null when removed ([0b09ebb](https://github.com/pct-org/graphql-api/commit/0b09ebb6abfbfcffe854a7dcd335daf8ee85d513))
-
-
-
-## [0.6.3](https://github.com/pct-org/graphql-api/compare/v0.6.2...v0.6.3) (2020-04-26)
-
-
-### Bug Fixes
-
-* Fixes in mongo models ([ef99c81](https://github.com/pct-org/graphql-api/commit/ef99c819ee2928256fd6ec5f3f6e819240ed9067))
 
 
 
