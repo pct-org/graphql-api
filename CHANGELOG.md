@@ -1,3 +1,7 @@
+## [0.8.2](https://github.com/pct-org/graphql-api/compare/v0.8.1...v0.8.2) (2020-05-08)
+
+
+
 ## [0.8.1](https://github.com/pct-org/graphql-api/compare/v0.8.0...v0.8.1) (2020-05-05)
 
 
@@ -42,15 +46,6 @@
 ### Bug Fixes
 
 * Fixed that updateOne did not work correctly ([ff456dd](https://github.com/pct-org/graphql-api/commit/ff456dddc1f39a526e8a54fb971228d85b0cfffe))
-
-
-
-## [0.6.4](https://github.com/pct-org/graphql-api/compare/v0.6.3...v0.6.4) (2020-04-26)
-
-
-### Bug Fixes
-
-* Put download quality to null when removed ([0b09ebb](https://github.com/pct-org/graphql-api/commit/0b09ebb6abfbfcffe854a7dcd335daf8ee85d513))
 
 
 
