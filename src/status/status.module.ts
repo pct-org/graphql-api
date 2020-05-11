@@ -7,7 +7,7 @@ import { StatusController } from './status.controller'
 @Module({
   imports: [
     HttpModule.register({
-      timeout: 500
+      timeout: 1000
     })
   ],
   providers: [StatusResolver, StatusService],
