@@ -1,3 +1,12 @@
+## [0.8.3](https://github.com/pct-org/graphql-api/compare/v0.8.2...v0.8.3) (2020-05-12)
+
+
+### Bug Fixes
+
+* Increased the max timeout for status call to scraper ([1b3a5ee](https://github.com/pct-org/graphql-api/commit/1b3a5ee27975c260a31184820f4ce92ecf5f3e31))
+
+
+
 ## [0.8.2](https://github.com/pct-org/graphql-api/compare/v0.8.1...v0.8.2) (2020-05-08)
 
 
@@ -37,15 +46,6 @@
 
 * Added next update to scraper status call ([b2221b5](https://github.com/pct-org/graphql-api/commit/b2221b5391b8c20c2c024b46882428b05565d07b))
 * Added the option to shows to only get downloaded items ([273dc27](https://github.com/pct-org/graphql-api/commit/273dc27aabff704199b38f031cafdb241d21b83a))
-
-
-
-## [0.6.5](https://github.com/pct-org/graphql-api/compare/v0.6.4...v0.6.5) (2020-04-26)
-
-
-### Bug Fixes
-
-* Fixed that updateOne did not work correctly ([ff456dd](https://github.com/pct-org/graphql-api/commit/ff456dddc1f39a526e8a54fb971228d85b0cfffe))
 
 
 
