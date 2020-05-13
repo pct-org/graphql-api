@@ -34,7 +34,7 @@ export class TorrentService {
   /**
    * Array of downloads that will be downloaded in the background
    */
-  private downloads: Download[] = []
+  public downloads: Download[] = []
 
   /**
    * Are we currently downloading in the background

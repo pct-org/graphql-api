@@ -30,6 +30,13 @@ export class DownloadsResolver {
     return this.downloadsService.findOne(downloadArgs)
   }
 
+  @Query(returns => [Download], { description: 'Get all active/queued downloads.' })
+  activeDownloads(): Promise<Download[]> {
+    return this.downloadsService.findAllWithIds(
+      this.torrentService.downloads.map((download) => download._id)
+    )
+  }
+
   @Mutation(returns => Download)
   async startDownload(
     @Args('_id') _id: string,
