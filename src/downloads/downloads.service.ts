@@ -54,6 +54,19 @@ export class DownloadsService {
   }
 
   /**
+   * Get all the downloads with a certain id
+   */
+  findAllWithIds(ids: string[]): Promise<Download[]> {
+    return this.downloadModel.find(
+      {
+        _id: {
+          $in: ids
+        }
+      }
+    )
+  }
+
+  /**
    * Get all downloads
    */
   getAllEpisodes(): Promise<Download[]> {
