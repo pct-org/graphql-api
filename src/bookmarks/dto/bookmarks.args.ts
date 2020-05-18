@@ -13,4 +13,7 @@ export class BookmarksArgs {
   @Max(50)
   limit: number = 25
 
+  @Field({ nullable: true })
+  query: string = null
+
 }
