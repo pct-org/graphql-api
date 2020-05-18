@@ -1,3 +1,12 @@
+## [0.9.1](https://github.com/pct-org/graphql-api/compare/v0.9.0...v0.9.1) (2020-05-18)
+
+
+### Bug Fixes
+
+* Fixed that you could not search in bookmarks ([8ce1212](https://github.com/pct-org/graphql-api/commit/8ce1212df40a3c41458cac8655e4cd106de12076))
+
+
+
 # [0.9.0](https://github.com/pct-org/graphql-api/compare/v0.8.3...v0.9.0) (2020-05-13)
 
 
@@ -26,20 +35,6 @@
 ### Bug Fixes
 
 * Fixed seeking for chromecast ([c4accf4](https://github.com/pct-org/graphql-api/commit/c4accf42c3b405f40f65298b0033ad900512ecee))
-
-
-
-# [0.8.0](https://github.com/pct-org/graphql-api/compare/v0.7.0...v0.8.0) (2020-05-04)
-
-
-### Bug Fixes
-
-* Fixed seeking not working ([868f243](https://github.com/pct-org/graphql-api/commit/868f243f438ee5b559f1fb237688b3f4d45b329d))
-
-
-### Features
-
-* Added progress tracking ([17dd9d2](https://github.com/pct-org/graphql-api/commit/17dd9d24679dd6b684b0238e6561bc890af919ef))
 
 
 
