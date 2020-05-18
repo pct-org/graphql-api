@@ -19,11 +19,11 @@ export class EpisodesService {
   async findMyEpisodes(bookmarksService: BookmarksService): Promise<Episode[]> {
     const shows = await bookmarksService.findAllShows({
       offset: 0,
-      limit: 1000
+      limit: 1000,
+      query: null
     })
 
     const eightDaysAgo = new Date(new Date().getTime() - (8 * 24 * 60 * 60 * 1000)).getTime()
-    const today = new Date().getTime()
 
     return this.episodeModel.find(
       {
@@ -32,9 +32,7 @@ export class EpisodesService {
         },
         firstAired: {
           $gt: eightDaysAgo,
-          $lt: today
         },
-        torrents: { $exists: true },
         $where: 'this.torrents.length > 0'
       },
       {},

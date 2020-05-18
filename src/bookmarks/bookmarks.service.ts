@@ -16,17 +16,7 @@ export class BookmarksService {
   ) {}
 
   async findAll(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
-    const movies = await this.movieModel.find(
-      {
-        bookmarked: true
-      },
-      {},
-      {
-        skip: bookmarksArgs.offset,
-        limit: bookmarksArgs.limit
-      }
-    )
-
+    const movies = await this.findAllMovies(bookmarksArgs)
     const shows = await this.findAllShows(bookmarksArgs)
 
     return [
@@ -35,11 +25,20 @@ export class BookmarksService {
     ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
   }
 
+  findAllMovies(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
+    return this.movieModel.find(
+      this.getQuery(bookmarksArgs),
+      {},
+      {
+        skip: bookmarksArgs.offset,
+        limit: bookmarksArgs.limit
+      }
+    )
+  }
+
   findAllShows(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
     return this.showModel.find(
-      {
-        bookmarked: true
-      },
+      this.getQuery(bookmarksArgs),
       {},
       {
         skip: bookmarksArgs.offset,
@@ -74,4 +73,24 @@ export class BookmarksService {
     )
   }
 
+  /**
+   * Get's the correct query to get the correct bookmarks
+   * @param bookmarksArgs
+   */
+  private getQuery(bookmarksArgs: BookmarksArgs): object {
+    if (bookmarksArgs.query && bookmarksArgs.query.trim().length > 0) {
+      return {
+        bookmarked: true,
+        title: {
+          // Update the query to make it better searchable
+          $regex: bookmarksArgs.query.split(' ').join('.+'),
+          $options: 'i'
+        }
+      }
+    }
+
+    return {
+      bookmarked: true,
+    }
+  }
 }
