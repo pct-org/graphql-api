@@ -19,32 +19,28 @@ export class BookmarksService {
     const movies = await this.findAllMovies(bookmarksArgs)
     const shows = await this.findAllShows(bookmarksArgs)
 
-    return [
-      ...movies,
-      ...shows
-    ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
+    // We apply the offset and limit later to make sure all the bookmarks are always returned
+    return [...movies, ...shows]
+      .sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
+      .slice(bookmarksArgs.offset, bookmarksArgs.offset + bookmarksArgs.limit)
   }
 
-  findAllMovies(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
-    return this.movieModel.find(
-      this.getQuery(bookmarksArgs),
-      {},
-      {
-        skip: bookmarksArgs.offset,
-        limit: bookmarksArgs.limit
-      }
-    )
+  async findAllMovies(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
+    const movies = []
+    for await (const movie of this.movieModel.find(this.getQuery(bookmarksArgs))) {
+      movies.push(movie)
+    }
+
+    return movies
   }
 
-  findAllShows(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
-    return this.showModel.find(
-      this.getQuery(bookmarksArgs),
-      {},
-      {
-        skip: bookmarksArgs.offset,
-        limit: bookmarksArgs.limit
-      }
-    )
+  async findAllShows(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
+    const shows = []
+    for await (const movie of this.showModel.find(this.getQuery(bookmarksArgs))) {
+      shows.push(movie)
+    }
+
+    return shows
   }
 
   /**
@@ -90,7 +86,7 @@ export class BookmarksService {
     }
 
     return {
-      bookmarked: true,
+      bookmarked: true
     }
   }
 }
