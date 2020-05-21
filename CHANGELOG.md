@@ -1,3 +1,12 @@
+## [0.9.2](https://github.com/pct-org/graphql-api/compare/v0.9.1...v0.9.2) (2020-05-21)
+
+
+### Bug Fixes
+
+* Fixed not all bookmarks being returned ([d84c94e](https://github.com/pct-org/graphql-api/commit/d84c94e4189c624a820b755b0ccaa145d89e989e))
+
+
+
 ## [0.9.1](https://github.com/pct-org/graphql-api/compare/v0.9.0...v0.9.1) (2020-05-18)
 
 
@@ -26,15 +35,6 @@
 
 
 ## [0.8.2](https://github.com/pct-org/graphql-api/compare/v0.8.1...v0.8.2) (2020-05-08)
-
-
-
-## [0.8.1](https://github.com/pct-org/graphql-api/compare/v0.8.0...v0.8.1) (2020-05-05)
-
-
-### Bug Fixes
-
-* Fixed seeking for chromecast ([c4accf4](https://github.com/pct-org/graphql-api/commit/c4accf42c3b405f40f65298b0033ad900512ecee))
 
 
 
