@@ -1,3 +1,7 @@
+## [0.9.3](https://github.com/pct-org/graphql-api/compare/v0.9.2...v0.9.3) (2020-05-22)
+
+
+
 ## [0.9.2](https://github.com/pct-org/graphql-api/compare/v0.9.1...v0.9.2) (2020-05-21)
 
 
@@ -31,10 +35,6 @@
 ### Bug Fixes
 
 * Increased the max timeout for status call to scraper ([1b3a5ee](https://github.com/pct-org/graphql-api/commit/1b3a5ee27975c260a31184820f4ce92ecf5f3e31))
-
-
-
-## [0.8.2](https://github.com/pct-org/graphql-api/compare/v0.8.1...v0.8.2) (2020-05-08)
 
 
 
