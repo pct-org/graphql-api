@@ -19,10 +19,10 @@ export class BookmarksService {
     const movies = await this.findAllMovies(bookmarksArgs)
     const shows = await this.findAllShows(bookmarksArgs)
 
-    // We apply the offset and limit later to make sure all the bookmarks are always returned
+    // Return all bookmarks at once
     return [...movies, ...shows]
       .sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
-      .slice(bookmarksArgs.offset, bookmarksArgs.offset + bookmarksArgs.limit)
+      // .slice(bookmarksArgs.offset, bookmarksArgs.offset + bookmarksArgs.limit)
   }
 
   async findAllMovies(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
