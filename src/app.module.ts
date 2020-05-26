@@ -9,6 +9,7 @@ import { TorrentModule } from './shared/torrent/torrent.module'
 import { PubSubModule } from './shared/pub-sub/pub-sub.module'
 
 import { StatusModule } from './status/status.module'
+import { CalendarModule } from './calendar/calendar.module'
 import { MoviesModule } from './movies/movies.module'
 import { ShowsModule } from './shows/shows.module'
 import { SeasonsModule } from './seasons/seasons.module'
@@ -38,6 +39,7 @@ import { WatchModule } from './watch/watch.module'
 
     // Rest
     WatchModule,
+    CalendarModule,
 
     // Enable Mongoose
     MongooseModule.forRootAsync({

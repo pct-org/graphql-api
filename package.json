@@ -41,6 +41,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "graphql": "14.5.8",
     "graphql-subscriptions": "^1.1.0",
+    "ical-generator": "^1.10.0",
     "mongoose": "5.9.12",
     "p-map": "4.0.0",
     "reflect-metadata": "^0.1.12",
