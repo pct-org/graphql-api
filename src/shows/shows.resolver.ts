@@ -35,10 +35,12 @@ export class ShowsResolver {
       const downloads = await this.downloadsService.getAllEpisodes()
       const shows = this.showsService.getShowIDsFromDownloads(downloads)
 
-      return Promise.all(shows.map(async (show) => ({
-        ...await this.show({ _id: show._id }),
-        seasons: show.seasons
-      })))
+      return Promise.all(
+        shows.map(async (show) => ({
+          ...await this.show({ _id: show._id }),
+          seasons: show.seasons
+        }))
+      )
     }
 
     return this.showsService.findAll(showsArgs)

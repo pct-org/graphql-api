@@ -87,4 +87,24 @@ export class EpisodesService {
     )
   }
 
+  findForCalendar(showImdbId): Promise<Episode[]> {
+    const fourteenDaysAgo = new Date(new Date().getTime() - (14 * 24 * 60 * 60 * 1000)).getTime()
+
+    return this.episodeModel.find(
+      {
+        showImdbId,
+        firstAired: {
+          $gt: fourteenDaysAgo
+        },
+      },
+      {},
+      {
+        sort: {
+          number: 0 // Sort on episode number
+        },
+        lean: true
+      }
+    )
+  }
+
 }
