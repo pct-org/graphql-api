@@ -1,6 +1,6 @@
 {
   "name": "@pct-org/graphql-api",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "GraphQL API for the PCT environment",
   "repository": {
     "type": "git",

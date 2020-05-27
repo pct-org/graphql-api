@@ -1,3 +1,12 @@
+# [0.10.0](https://github.com/pct-org/graphql-api/compare/v0.9.3...v0.10.0) (2020-05-27)
+
+
+### Features
+
+* Added ical endpoints for bookmarked shows ([7c733ab](https://github.com/pct-org/graphql-api/commit/7c733abda97632ef5fd4c8c859218c934eea065a))
+
+
+
 ## [0.9.3](https://github.com/pct-org/graphql-api/compare/v0.9.2...v0.9.3) (2020-05-22)
 
 
@@ -26,15 +35,6 @@
 ### Features
 
 * Added query method activeDownloads ([83b9aec](https://github.com/pct-org/graphql-api/commit/83b9aec61c111001672efe825e4827ede16504a0))
-
-
-
-## [0.8.3](https://github.com/pct-org/graphql-api/compare/v0.8.2...v0.8.3) (2020-05-12)
-
-
-### Bug Fixes
-
-* Increased the max timeout for status call to scraper ([1b3a5ee](https://github.com/pct-org/graphql-api/commit/1b3a5ee27975c260a31184820f4ce92ecf5f3e31))
 
 
 
