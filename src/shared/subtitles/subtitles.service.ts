@@ -13,17 +13,27 @@ export class SubtitlesService {
 
   private readonly logger = new Logger(SubtitlesService.name)
 
-  private readonly client
+  private readonly client: OpenSubtitles
+
+  private readonly enabled: boolean = true
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService
   ) {
-    this.client = new OpenSubtitles({
-      useragent: 'Popcorn Time',
-      username: this.configService.get(ConfigService.OPENSUBTITLES_USERNAME),
-      password: this.configService.get(ConfigService.OPENSUBTITLES_PASSWORD)
-    })
+    const username = this.configService.get(ConfigService.OPENSUBTITLES_USERNAME)
+    const password = this.configService.get(ConfigService.OPENSUBTITLES_PASSWORD)
+
+    if (username && password) {
+      this.client = new OpenSubtitles({
+        useragent: 'Popcorn Time',
+        username,
+        password,
+      })
+
+    } else {
+      this.enabled = false
+    }
   }
 
   /**
@@ -34,6 +44,11 @@ export class SubtitlesService {
    * @param {boolean} retry - Are we allowed to retry or not.
    */
   public async searchForSubtitles(download: Model<Download>, torrent: TorrentFile, retry = true) {
+    // Only search for subtitles when it's enabled
+    if (!this.enabled) {
+      return
+    }
+
     this.logger.log(`[${download._id}]: Search for subtitles`)
 
     const filename = torrent.name
