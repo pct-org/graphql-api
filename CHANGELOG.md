@@ -1,3 +1,12 @@
+# [0.11.0](https://github.com/pct-org/graphql-api/compare/v0.10.0...v0.11.0) (2020-05-29)
+
+
+### Features
+
+* Auto download subtitles ([f0383f4](https://github.com/pct-org/graphql-api/commit/f0383f44cace195eb39bc47074d81b325c66971e))
+
+
+
 # [0.10.0](https://github.com/pct-org/graphql-api/compare/v0.9.3...v0.10.0) (2020-05-27)
 
 
@@ -26,15 +35,6 @@
 ### Bug Fixes
 
 * Fixed that you could not search in bookmarks ([8ce1212](https://github.com/pct-org/graphql-api/commit/8ce1212df40a3c41458cac8655e4cd106de12076))
-
-
-
-# [0.9.0](https://github.com/pct-org/graphql-api/compare/v0.8.3...v0.9.0) (2020-05-13)
-
-
-### Features
-
-* Added query method activeDownloads ([83b9aec](https://github.com/pct-org/graphql-api/commit/83b9aec61c111001672efe825e4827ede16504a0))
 
 
 
