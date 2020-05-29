@@ -10,6 +10,7 @@ import * as rimraf from 'rimraf'
 import { ConfigService } from '../config/config.service'
 import { formatKbToString } from '../utils'
 import { TorrentInterface } from './torrent.interface'
+import { SubtitlesService } from '../subtitles/subtitles.service'
 
 @Injectable()
 export class TorrentService {
@@ -60,7 +61,8 @@ export class TorrentService {
     @InjectModel('Movies') private readonly movieModel: Model<Movie>,
     @InjectModel('Episodes') private readonly episodeModel: Model<Episode>,
     @InjectModel('Downloads') private readonly downloadModel: Model<Download>,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly subtitlesService: SubtitlesService
   ) {
     this.setupWebTorrent()
 
@@ -272,7 +274,7 @@ export class TorrentService {
   private handleTorrent(resolve, item, download, magnet) {
     return (torrent: Torrent) => {
       // Let's make sure all the not needed files are deselected
-      const { file, torrentIndex } = torrent.files.reduce((previous, current, index) => {
+      const { file } = torrent.files.reduce((previous, current, index) => {
         const formatIsSupported = !!this.supportedFormats.find(format => current.name.includes(format))
 
         if (formatIsSupported) {
@@ -304,6 +306,7 @@ export class TorrentService {
         resolve
       })
 
+      let searchedSubs = false
       let lastUpdate = {
         progress: null,
         numPeers: null
@@ -347,6 +350,14 @@ export class TorrentService {
 
       torrent.on('download', async () => {
         const newProgress = torrent.progress * 100
+
+        // If the last progress is bigger then 0.08 then we have have a file and can search for subs
+        if (!searchedSubs && newProgress > 0.08) {
+          searchedSubs = true
+
+          // Search and download subs
+          this.subtitlesService.searchForSubtitles(download, file)
+        }
 
         // Only update every 0.5 %
         if (lastUpdate.progress === null
@@ -441,7 +452,7 @@ export class TorrentService {
 
       item.download = {
         ...item.download,
-        ...update.download,
+        ...update.download
       }
 
     } else {
@@ -518,6 +529,6 @@ export class TorrentService {
    * Returns the download location for a download
    */
   private getDownloadLocation(download: Download) {
-    return `${this.configService.get('DOWNLOAD_LOCATION')}/${download._id}`
+    return `${this.configService.get(ConfigService.DOWNLOAD_LOCATION)}/${download._id}`
   }
 }

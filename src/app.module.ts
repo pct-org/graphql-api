@@ -10,6 +10,7 @@ import { PubSubModule } from './shared/pub-sub/pub-sub.module'
 
 import { StatusModule } from './status/status.module'
 import { CalendarModule } from './calendar/calendar.module'
+import { SubtitleModule } from './subtitle/subtitle.module'
 import { MoviesModule } from './movies/movies.module'
 import { ShowsModule } from './shows/shows.module'
 import { SeasonsModule } from './seasons/seasons.module'
@@ -40,6 +41,7 @@ import { WatchModule } from './watch/watch.module'
     // Rest
     WatchModule,
     CalendarModule,
+    SubtitleModule,
 
     // Enable Mongoose
     MongooseModule.forRootAsync({

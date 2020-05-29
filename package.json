@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "7.0.9",
     "@nestjs/platform-fastify": "7.0.9",
     "@nestjs/serve-static": "2.1.0",
-    "@pct-org/mongo-models": "^1.4.4",
+    "@pct-org/mongo-models": "^1.5.3",
     "apollo-server-fastify": "2.12.0",
     "class-validator": "0.12.2",
     "dotenv": "8.2.0",
@@ -43,10 +43,12 @@
     "graphql-subscriptions": "^1.1.0",
     "ical-generator": "^1.10.0",
     "mongoose": "5.9.12",
+    "opensubtitles-api": "^5.1.2",
     "p-map": "4.0.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "3.0.2",
     "rxjs": "6.5.5",
+    "srt-to-vtt": "^1.1.3",
     "webtorrent-hybrid": "^4.0.1"
   },
   "devDependencies": {

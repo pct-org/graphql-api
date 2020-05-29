@@ -21,6 +21,8 @@ export class ConfigService {
   public static readonly MONGO_DATABASE: string = 'MONGO_DATABASE'
   public static readonly SCRAPER_URL: string = 'SCRAPER_URL'
   public static readonly DOWNLOAD_LOCATION: string = 'DOWNLOAD_LOCATION'
+  public static readonly OPENSUBTITLES_USERNAME: string = 'OPENSUBTITLES_USERNAME'
+  public static readonly OPENSUBTITLES_PASSWORD: string = 'OPENSUBTITLES_PASSWORD'
 
   private readonly envConfig: { [key: string]: string }
 
@@ -83,7 +85,7 @@ export class ConfigService {
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       [ConfigService.NODE_ENV]: Joi.string()
-      // .valid(['development', 'production', 'test', 'provision'])
+        // .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
 
       [ConfigService.PORT]: Joi.number()
@@ -108,7 +110,11 @@ export class ConfigService {
         .required(),
 
       [ConfigService.DOWNLOAD_LOCATION]: Joi.string()
-        .required()
+        .required(),
+
+      [ConfigService.OPENSUBTITLES_USERNAME]: Joi.string(),
+
+      [ConfigService.OPENSUBTITLES_PASSWORD]: Joi.string()
     })
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(envConfig, { stripUnknown: true })
