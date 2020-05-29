@@ -128,7 +128,7 @@ export class SubtitlesService {
    * @param {SubtitleInterface} subtitle - The subtitle to download.
    * @param {string} downloadLocation - Base location where to download to
    */
-  private async downloadSubtitle(download: Model<Download>, subtitle: SubtitleInterface, downloadLocation: String) {
+  private async downloadSubtitle(download: Model<Download>, subtitle: SubtitleInterface, downloadLocation: string) {
     const subLocation = `${subtitle.langcode}.srt`
     const writer = createWriteStream(`${downloadLocation}/${subLocation}`)
 

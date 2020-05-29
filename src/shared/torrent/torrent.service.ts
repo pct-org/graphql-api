@@ -166,7 +166,6 @@ export class TorrentService {
 
     // We are no longer downloading to disable
     this.backgroundDownloading = false
-    console.log('update backgroundDownloading to false')
   }
 
   /**
