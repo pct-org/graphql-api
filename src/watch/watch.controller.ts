@@ -79,9 +79,18 @@ export class WatchController {
       return res.send()
     }
 
+    // Check if we have this item downloading atm
+    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
+
     const isChromeCast = req?.query?.device === 'chromecast' ?? false
 
-    const { size: mediaSize } = fs.statSync(mediaFile)
+    // Get the size of the media file
+    let { size: mediaSize } = fs.statSync(mediaFile)
+
+    // If it its Chromecast and we have a torrent then use the file size from that
+    if (isChromeCast && torrent) {
+      mediaSize = torrent.file.length
+    }
 
     let streamOptions = null
 
@@ -122,11 +131,7 @@ export class WatchController {
       })
     }
 
-    // Check if we have this item downloading atm
-    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
-
     if (torrent) {
-      // TODO:: Test if this is still working as it should
       // Create readStream for torrent to make start end bytes priority
       torrent.file.createReadStream(streamOptions)
     }
