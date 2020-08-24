@@ -14,7 +14,10 @@ export class SeasonsService {
   findAllForShow(_id: string): Promise<Season[]> {
     return this.seasonModel.find(
       {
-        showImdbId: _id
+        showImdbId: _id,
+        firstAired: {
+          $gt: 0
+        }
       },
       {},
       {
