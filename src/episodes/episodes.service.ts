@@ -54,7 +54,10 @@ export class EpisodesService {
     return this.episodeModel.find(
       {
         showImdbId: imdbId,
-        season: seasonNumber
+        season: seasonNumber,
+        firstAired: {
+          $gt: 0
+        }
       },
       {},
       {
