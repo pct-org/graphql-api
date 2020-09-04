@@ -44,7 +44,7 @@ export class EpisodesService {
     )
   }
 
-  findOne(_id: string): Promise<Episode[]> {
+  findOne(_id: string): Promise<Episode> {
     return this.episodeModel.findById(
       _id
     )
