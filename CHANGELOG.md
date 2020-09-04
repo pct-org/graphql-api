@@ -1,3 +1,12 @@
+# [0.13.0](https://github.com/pct-org/graphql-api/compare/v0.12.1...v0.13.0) (2020-09-04)
+
+
+### Features
+
+* Added watch on tv modules ([15f66de](https://github.com/pct-org/graphql-api/commit/15f66dee20190f9111fb395204970b5993a932fe))
+
+
+
 ## [0.12.1](https://github.com/pct-org/graphql-api/compare/v0.12.0...v0.12.1) (2020-08-24)
 
 
@@ -31,10 +40,6 @@
 ### Features
 
 * Added ical endpoints for bookmarked shows ([7c733ab](https://github.com/pct-org/graphql-api/commit/7c733abda97632ef5fd4c8c859218c934eea065a))
-
-
-
-## [0.9.3](https://github.com/pct-org/graphql-api/compare/v0.9.2...v0.9.3) (2020-05-22)
 
 
 
