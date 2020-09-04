@@ -18,6 +18,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module'
 import { DownloadsModule } from './downloads/downloads.module'
 import { EpisodesModule } from './episodes/episodes.module'
 import { ProgressModule } from './progress/progress.module'
+import { WatchOnTvModule } from './watch-on-tv/watch-on-tv.module'
 
 import { WatchModule } from './watch/watch.module'
 
@@ -37,6 +38,7 @@ import { WatchModule } from './watch/watch.module'
     DownloadsModule,
     EpisodesModule,
     ProgressModule,
+    WatchOnTvModule,
 
     // Rest
     WatchModule,

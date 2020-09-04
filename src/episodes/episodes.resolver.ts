@@ -1,4 +1,4 @@
-import { Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import { Query, Resolver, ResolveField, Parent, Args } from '@nestjs/graphql'
 import { Episode, Show } from '@pct-org/mongo-models'
 
 import { EpisodesService } from './episodes.service'
@@ -17,6 +17,13 @@ export class EpisodesResolver {
   @Query(returns => [Episode])
   myEpisodes(): Promise<Episode[]> {
     return this.episodesService.findMyEpisodes(this.bookmarksService)
+  }
+
+  @Query(returns => Episode)
+  episode(
+    @Args('_id') _id: string,
+  ): Promise<Episode> {
+    return this.episodesService.findOne(_id)
   }
 
   @ResolveField(type => Show)
