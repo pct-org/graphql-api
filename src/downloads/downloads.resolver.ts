@@ -44,12 +44,16 @@ export class DownloadsResolver {
     @Args('quality') quality: string,
     @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string
   ): Promise<Download> {
-    const downloadExists = await this.downloadsService.findOne({
-      _id
-    })
+    const downloadExists = await this.download({ _id })
 
     if (downloadExists) {
-      return downloadExists
+      // If the download exists but has status failed then remove everything so we can retry
+      if (downloadExists.status === TorrentService.STATUS_FAILED) {
+        await this.torrentService.cleanUpDownload(downloadExists)
+
+      } else {
+        return downloadExists
+      }
     }
 
     const download = await this.downloadsService.addOne({

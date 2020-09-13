@@ -349,11 +349,6 @@ export class TorrentService {
       torrent.on('noPeers', async (announceType) => {
         if (announceType === 'dht') {
           this.logger.warn(`[${download._id}]: No peers found`)
-          // No peers found, update status to failed
-          await this.updateOne(download, {
-            status: TorrentService.STATUS_FAILED
-          })
-
           await this.updateOne(item, {
             download: {
               downloadStatus: TorrentService.STATUS_FAILED,
@@ -511,23 +506,27 @@ export class TorrentService {
    * Cleans up a download
    */
   public cleanUpDownload(download: Model<Download>) {
-    // Delete the download
-    download.delete()
+    return new Promise(async (resolve) => {
+      // Delete the download
+      await download.delete()
 
-    const down = this.downloads.find(findDown => findDown._id === download._id)
+      const down = this.downloads.find(findDown => findDown._id === download._id)
 
-    if (down) {
-      // Remove from array
-      this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+      if (down) {
+        // Remove from array
+        this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
 
-      this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
-    }
-
-    // Remove the download folder
-    rimraf(this.getDownloadLocation(download), (error) => {
-      if (error) {
-        this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+        this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
       }
+
+      // Remove the download folder
+      rimraf(this.getDownloadLocation(download), (error) => {
+        if (error) {
+          this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+        }
+
+        resolve()
+      })
     })
   }
 
