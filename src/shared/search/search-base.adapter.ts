@@ -12,9 +12,9 @@ export abstract class SearchAdapter {
   ) {
   }
 
-  searchEpisode: (episode: Episode, isRetry: boolean) => Promise<any>
+  searchEpisode: (episode: Episode) => Promise<any>
 
-  searchMovie: (episode: Movie, isRetry: boolean) => Promise<any>
+  searchMovie: (episode: Movie) => Promise<any>
 
   protected buildSeasonEpisodeString = (episode: Episode): string => {
     const seasonNr = `0${episode.season}`
@@ -24,7 +24,8 @@ export abstract class SearchAdapter {
   }
 
   protected getEpisodeQuery = (episode: Episode): string => {
-    const searchTitle = episode.show.title.toLowerCase().replace(' ', '.')
+    const searchTitle = episode.show.title.toLowerCase()
+      .replace(/\s/g, '.')
 
     return `${searchTitle}.${this.buildSeasonEpisodeString(episode)}`
   }
@@ -44,9 +45,21 @@ export abstract class SearchAdapter {
 
     // Most accurate categorization
     if (lowerCaseMetadata.includes('2160')) return '2160p'
+    if (lowerCaseMetadata.includes('4k')) return '2160p'
     if (lowerCaseMetadata.includes('1080')) return '1080p'
     if (lowerCaseMetadata.includes('720')) return '720p'
     if (lowerCaseMetadata.includes('480')) return '480p'
+
+    // Guess the quality 1080p
+    if (lowerCaseMetadata.includes('bluray')) return '1080p'
+    if (lowerCaseMetadata.includes('blu-ray')) return '1080p'
+
+    // Guess the quality 720p, prefer english
+    if (lowerCaseMetadata.includes('dvd')) return '720p'
+    if (lowerCaseMetadata.includes('rip')) return '720p'
+    if (lowerCaseMetadata.includes('mp4')) return '720p'
+    if (lowerCaseMetadata.includes('web')) return '720p'
+    if (lowerCaseMetadata.includes('hdtv')) return '720p'
 
     return null
   }
