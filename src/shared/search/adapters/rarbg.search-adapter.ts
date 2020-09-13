@@ -1,10 +1,13 @@
 import { Episode, Movie, Torrent } from '@pct-org/mongo-models'
+import { Logger } from '@nestjs/common'
 
 import { SearchAdapter } from '../search-base.adapter'
 
 export class RarbgSearchAdapter extends SearchAdapter {
 
-  static providerName = 'RBG'
+  static providerName = 'RARBG'
+
+  private readonly logger = new Logger(RarbgSearchAdapter.name)
 
   url = 'https://torrentapi.org/pubapi_v2.php'
 
@@ -56,17 +59,16 @@ export class RarbgSearchAdapter extends SearchAdapter {
    * Search for a episode
    *
    * @param episode
-   * @param isRetry
    * @returns {Promise<*>}
    */
-  searchEpisode = async (episode: Episode, isRetry = false) => {
+  searchEpisode = async (episode: Episode) => {
     try {
       const token = await this.getToken()
 
       if (token) {
         const { torrent_results } = await this.get(this.getRequestParams(episode))
 
-        if (torrent_results.length > 0) {
+        if (torrent_results && torrent_results.length > 0) {
           // Double check that the torrents are for the episode we want
           const foundTorrents = torrent_results
             .filter((torrent) =>
@@ -74,10 +76,13 @@ export class RarbgSearchAdapter extends SearchAdapter {
             )
             // Sometimes the episodes are marked incorrectly, so we check if the episode info matches
             // or if that SXXEXX is included in the title
-            .filter((torrent) => (
-              parseInt(torrent.episode_info.seasonnum) === episode.season &&
-              parseInt(torrent.episode_info.epnum) === episode.number
-            ) || torrent.title.includes(this.buildSeasonEpisodeString(episode)))
+            .filter((torrent) =>
+              (
+                parseInt(torrent.episode_info.seasonnum) === episode.season &&
+                parseInt(torrent.episode_info.epnum) === episode.number
+              ) ||
+              torrent.title.toUpperCase().includes(this.buildSeasonEpisodeString(episode).toUpperCase())
+            )
 
           // Format all the torrents and remove the ones that returned false
           return foundTorrents.map(this.formatTorrent).filter(Boolean)
@@ -85,9 +90,7 @@ export class RarbgSearchAdapter extends SearchAdapter {
       }
 
     } catch (e) {
-      if (!isRetry) {
-        return this.searchEpisode(episode, true)
-      }
+      this.logger.error('Error searching for episode!', e)
     }
 
     return []
@@ -97,10 +100,9 @@ export class RarbgSearchAdapter extends SearchAdapter {
    * Search for movies
    *
    * @param movie
-   * @param isRetry
    * @returns {Promise<*>}
    */
-  searchMovie = async (movie: Movie, isRetry = false) => {
+  searchMovie = async (movie: Movie) => {
     try {
       const token = await this.getToken()
 
@@ -114,9 +116,7 @@ export class RarbgSearchAdapter extends SearchAdapter {
       }
 
     } catch (e) {
-      if (!isRetry) {
-        return this.searchMovie(movie, true)
-      }
+      this.logger.error('Error searching for movie!', e)
     }
 
     return []
@@ -132,10 +132,10 @@ export class RarbgSearchAdapter extends SearchAdapter {
 
     return {
       language: 'en',
-      peers: torrent.leechers,
+      peers: parseInt(torrent.leechers, 10),
       provider: RarbgSearchAdapter.providerName,
       quality: quality,
-      seeds: torrent.seeders,
+      seeds: parseInt(torrent.seeders, 10),
       size: torrent.size,
       sizeString: this.getStringSize(torrent.size),
       title: torrent.title,
