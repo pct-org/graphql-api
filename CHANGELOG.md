@@ -1,3 +1,17 @@
+# [0.15.0](https://github.com/pct-org/graphql-api/compare/v0.14.0...v0.15.0) (2020-09-13)
+
+
+### Bug Fixes
+
+* Couple of fixes ([d587194](https://github.com/pct-org/graphql-api/commit/d58719480d3f48a0d428cbd0b6cae0b2f135a321))
+
+
+### Features
+
+* Added 1337x search provider ([4831fcf](https://github.com/pct-org/graphql-api/commit/4831fcf0a2133fb119618d6084bc816c58d9abc2))
+
+
+
 # [0.14.0](https://github.com/pct-org/graphql-api/compare/v0.13.0...v0.14.0) (2020-09-13)
 
 
@@ -36,15 +50,6 @@
 ### Features
 
 * Use the size of the download when watching ([21d1b39](https://github.com/pct-org/graphql-api/commit/21d1b39f65db6da8da0dd2ff2064c2d0ce9fcd96))
-
-
-
-# [0.11.0](https://github.com/pct-org/graphql-api/compare/v0.10.0...v0.11.0) (2020-05-29)
-
-
-### Features
-
-* Auto download subtitles ([f0383f4](https://github.com/pct-org/graphql-api/commit/f0383f44cace195eb39bc47074d81b325c66971e))
 
 
 
