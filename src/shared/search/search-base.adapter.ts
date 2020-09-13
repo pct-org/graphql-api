@@ -51,15 +51,15 @@ export abstract class SearchAdapter {
     if (lowerCaseMetadata.includes('480')) return '480p'
 
     // Guess the quality 1080p
-    if (lowerCaseMetadata.includes('bluray')) return '1080p'
-    if (lowerCaseMetadata.includes('blu-ray')) return '1080p'
+    if (lowerCaseMetadata.includes('bluray')) return '1080p-bl'
+    if (lowerCaseMetadata.includes('blu-ray')) return '1080p-bl'
 
     // Guess the quality 720p, prefer english
-    if (lowerCaseMetadata.includes('dvd')) return '720p'
-    if (lowerCaseMetadata.includes('rip')) return '720p'
-    if (lowerCaseMetadata.includes('mp4')) return '720p'
-    if (lowerCaseMetadata.includes('web')) return '720p'
-    if (lowerCaseMetadata.includes('hdtv')) return '720p'
+    if (lowerCaseMetadata.includes('dvd')) return '720p-ish'
+    if (lowerCaseMetadata.includes('rip')) return '720p-ish'
+    if (lowerCaseMetadata.includes('mp4')) return '720p-ish'
+    if (lowerCaseMetadata.includes('web')) return '720p-ish'
+    if (lowerCaseMetadata.includes('hdtv')) return '720p-ish'
 
     return null
   }
