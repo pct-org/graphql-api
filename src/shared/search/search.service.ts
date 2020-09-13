@@ -2,6 +2,7 @@ import { HttpService, Injectable, Logger } from '@nestjs/common'
 import { Episode, Movie, Torrent } from '@pct-org/mongo-models'
 
 import { RarbgSearchAdapter } from './adapters/rarbg.search-adapter'
+import { OneThreeThreeSevenXSearchAdapater } from './adapters/1337x.search-adapter'
 import { SearchAdapter } from './search-base.adapter'
 
 @Injectable()
@@ -15,11 +16,12 @@ export class SearchService {
     private readonly httpService: HttpService
   ) {
     this.adapters.push(new RarbgSearchAdapter(httpService))
+    this.adapters.push(new OneThreeThreeSevenXSearchAdapater(httpService))
   }
 
   searchEpisode = async (episode: Episode) => {
     const results = await Promise.all(this.adapters.map(
-      adapter => adapter.searchEpisode(episode, false))
+      adapter => adapter.searchEpisode(episode))
     )
 
     return this.filterDuplicateTorrentsAndSort(
@@ -32,7 +34,7 @@ export class SearchService {
 
   searchMovie = async (movie: Movie) => {
     const results = await Promise.all(this.adapters.map(
-      adapter => adapter.searchMovie(movie, false))
+      adapter => adapter.searchMovie(movie))
     )
 
     return this.filterDuplicateTorrentsAndSort(
@@ -72,7 +74,7 @@ export class SearchService {
             add = true
           }
 
-        } else if (match.seeds < torrent.seeds) {
+        } else if (torrent.seeds > match.seeds) {
           add = true
         }
       }
@@ -82,7 +84,7 @@ export class SearchService {
         // If add was true and we have a match we need to remove the old one
         if (match) {
           newTorrents = newTorrents.filter(
-            t => t.quality !== torrent.quality
+            t => t.quality !== match.quality
           )
         }
 
