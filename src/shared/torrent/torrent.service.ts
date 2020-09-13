@@ -122,9 +122,7 @@ export class TorrentService {
         this.logger.log(`[${download._id}]: Stop connecting`)
 
         // Remove the magnet from the client
-        this.webTorrent.remove(
-          connectingTorrent.magnet.url
-        )
+        this.removeFromWebTorrent(connectingTorrent.magnet.url)
 
         this.removeFromTorrents(download)
 
@@ -147,6 +145,7 @@ export class TorrentService {
 
         this.logger.log(`[${download._id}]: Stopped download`)
 
+        // Remove the magnet from the client
         this.removeFromTorrents(download)
 
         resolve()
@@ -368,10 +367,7 @@ export class TorrentService {
           // Also cleanup this download
           await this.cleanUpDownload(download)
 
-          // Remove the magnet from the client
-          this.webTorrent.remove(
-            magnet.url
-          )
+          this.removeFromWebTorrent(magnet.url)
 
           // Resolve instead of reject as no try catch is around the method
           resolve()
@@ -459,9 +455,7 @@ export class TorrentService {
         })
 
         // Remove the magnet from the client
-        this.webTorrent.remove(
-          magnet.url
-        )
+        this.removeFromWebTorrent(magnet.url)
 
         // Where done, resolve
         resolve()
@@ -573,5 +567,19 @@ export class TorrentService {
    */
   private getDownloadLocation(download: Download) {
     return `${this.configService.get(ConfigService.DOWNLOAD_LOCATION)}/${download._id}`
+  }
+
+  /**
+   * Removes the provided magnet from web torrent
+   */
+  private removeFromWebTorrent(magnet) {
+    try {
+      // Remove the magnet from the client
+      this.webTorrent.remove(
+        magnet.url
+      )
+    } catch (err) {
+      this.logger.error('Error while trying to remove magnet from web torrent!', err)
+    }
   }
 }
