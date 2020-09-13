@@ -9,7 +9,7 @@ import * as rimraf from 'rimraf'
 
 import { ConfigService } from '../config/config.service'
 import { formatKbToString } from '../utils'
-import { TorrentInterface } from './torrent.interface'
+import { TorrentInterface, ConnectingTorrentInterface } from './torrent.interface'
 import { SubtitlesService } from '../subtitles/subtitles.service'
 
 @Injectable()
@@ -46,6 +46,11 @@ export class TorrentService {
    * Items currently downloading
    */
   public torrents: TorrentInterface[] = []
+
+  /**
+   * Items currently connecting
+   */
+  public connectingTorrents: ConnectingTorrentInterface[] = []
 
   /**
    * WebTorrent engine
@@ -108,8 +113,21 @@ export class TorrentService {
    */
   public stopDownloading(download: Download): Promise<any> {
     return new Promise((resolve) => {
-      // Get the stream
-      const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
+      const connectingTorrent = this.getConnectingTorrentForDownload(download)
+      const downloadingTorrent = this.getTorrentForDownload(download)
+
+      // If we have a connecting torrent and don't have a downloading torrent
+      // then stop connecting and cleanup
+      if (connectingTorrent && !downloadingTorrent) {
+        this.logger.log(`[${download._id}]: Stop connecting`)
+
+        // Remove the magnet from the client
+        this.removeFromWebTorrent(connectingTorrent.magnet.url)
+
+        this.removeFromTorrents(download)
+
+        return connectingTorrent.resolve()
+      }
 
       if (!downloadingTorrent) {
         return resolve()
@@ -127,6 +145,7 @@ export class TorrentService {
 
         this.logger.log(`[${download._id}]: Stopped download`)
 
+        // Remove the magnet from the client
         this.removeFromTorrents(download)
 
         resolve()
@@ -252,6 +271,13 @@ export class TorrentService {
         numPeers: null
       })
 
+      // Add to active torrents array
+      this.connectingTorrents.push({
+        _id: download._id,
+        magnet,
+        resolve
+      })
+
       this.webTorrent.add(
         magnet.url,
         {
@@ -306,6 +332,9 @@ export class TorrentService {
         resolve
       })
 
+      // Now the torrent is added to the active torrents we can remove it from connecting
+      this.removeFromTorrents(download, true)
+
       let searchedSubs = false
       let lastUpdate = {
         progress: null,
@@ -338,10 +367,7 @@ export class TorrentService {
           // Also cleanup this download
           await this.cleanUpDownload(download)
 
-          // Remove the magnet from the client
-          this.webTorrent.remove(
-            magnet.url
-          )
+          this.removeFromWebTorrent(magnet.url)
 
           // Resolve instead of reject as no try catch is around the method
           resolve()
@@ -429,9 +455,7 @@ export class TorrentService {
         })
 
         // Remove the magnet from the client
-        this.webTorrent.remove(
-          magnet.url
-        )
+        this.removeFromWebTorrent(magnet.url)
 
         // Where done, resolve
         resolve()
@@ -475,8 +499,12 @@ export class TorrentService {
   /**
    * Removes a download from torrents
    */
-  private removeFromTorrents(download: Model<Download>) {
-    this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+  private removeFromTorrents(download: Model<Download>, connectingOnly = false) {
+    this.connectingTorrents = this.connectingTorrents.filter(tor => tor._id !== download._id)
+
+    if (!connectingOnly) {
+      this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+    }
   }
 
   /**
@@ -526,9 +554,32 @@ export class TorrentService {
   }
 
   /**
+   * Get's the connecting torrent for the download
+   *
+   * @param download
+   */
+  public getConnectingTorrentForDownload(download: Download): ConnectingTorrentInterface {
+    return this.connectingTorrents.find(torrent => torrent._id === download._id)
+  }
+
+  /**
    * Returns the download location for a download
    */
   private getDownloadLocation(download: Download) {
     return `${this.configService.get(ConfigService.DOWNLOAD_LOCATION)}/${download._id}`
+  }
+
+  /**
+   * Removes the provided magnet from web torrent
+   */
+  private removeFromWebTorrent(magnet) {
+    try {
+      // Remove the magnet from the client
+      this.webTorrent.remove(
+        magnet.url
+      )
+    } catch (err) {
+      this.logger.error('Error while trying to remove magnet from web torrent!', err)
+    }
   }
 }

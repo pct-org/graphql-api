@@ -31,7 +31,7 @@ export class EpisodesService {
           $in: shows.map(show => show._id)
         },
         firstAired: {
-          $gt: eightDaysAgo,
+          $gt: eightDaysAgo
         },
         $where: 'this.torrents.length > 0'
       },
@@ -45,9 +45,7 @@ export class EpisodesService {
   }
 
   findOne(_id: string): Promise<Episode> {
-    return this.episodeModel.findById(
-      _id
-    )
+    return this.episodeModel.findById(_id)
   }
 
   findAllForSeason(imdbId: string, seasonNumber: number): Promise<Episode[]> {
@@ -98,7 +96,7 @@ export class EpisodesService {
         showImdbId,
         firstAired: {
           $gt: fourteenDaysAgo
-        },
+        }
       },
       {},
       {
@@ -107,6 +105,17 @@ export class EpisodesService {
         },
         lean: true
       }
+    )
+  }
+
+  updateOne(episode: Episode): Promise<Episode> {
+    return this.episodeModel.findOneAndUpdate({
+        _id: episode._id
+      },
+      episode,
+      {
+        new: true,
+      },
     )
   }
 
