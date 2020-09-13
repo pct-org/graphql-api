@@ -8,6 +8,18 @@ export interface TorrentInterface {
 
   file: TorrentFile
 
-  resolve: () => {}
+  resolve: () => void
+
+}
+
+export interface ConnectingTorrentInterface {
+
+  _id: string
+
+  magnet?: {
+    url: string
+  }
+
+  resolve: () => void
 
 }

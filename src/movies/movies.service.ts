@@ -34,6 +34,17 @@ export class MoviesService extends ContentService {
     )
   }
 
+  updateOne(movie: Movie): Promise<Movie> {
+    return this.movieModel.findOneAndUpdate({
+        _id: movie._id
+      },
+      movie,
+      {
+        new: true,
+      },
+    )
+  }
+
   protected getQuery(moviesArgs: MoviesArgs): object {
     let query = super.getQuery(moviesArgs)
 

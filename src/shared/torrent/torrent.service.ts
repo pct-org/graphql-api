@@ -9,7 +9,7 @@ import * as rimraf from 'rimraf'
 
 import { ConfigService } from '../config/config.service'
 import { formatKbToString } from '../utils'
-import { TorrentInterface } from './torrent.interface'
+import { TorrentInterface, ConnectingTorrentInterface } from './torrent.interface'
 import { SubtitlesService } from '../subtitles/subtitles.service'
 
 @Injectable()
@@ -46,6 +46,11 @@ export class TorrentService {
    * Items currently downloading
    */
   public torrents: TorrentInterface[] = []
+
+  /**
+   * Items currently connecting
+   */
+  public connectingTorrents: ConnectingTorrentInterface[] = []
 
   /**
    * WebTorrent engine
@@ -108,8 +113,23 @@ export class TorrentService {
    */
   public stopDownloading(download: Download): Promise<any> {
     return new Promise((resolve) => {
-      // Get the stream
-      const downloadingTorrent = this.torrents.find(torrent => torrent._id === download._id)
+      const connectingTorrent = this.getConnectingTorrentForDownload(download)
+      const downloadingTorrent = this.getTorrentForDownload(download)
+
+      // If we have a connecting torrent and don't have a downloading torrent
+      // then stop connecting and cleanup
+      if (connectingTorrent && !downloadingTorrent) {
+        this.logger.log(`[${download._id}]: Stop connecting`)
+
+        // Remove the magnet from the client
+        this.webTorrent.remove(
+          connectingTorrent.magnet.url
+        )
+
+        this.removeFromTorrents(download)
+
+        return connectingTorrent.resolve()
+      }
 
       if (!downloadingTorrent) {
         return resolve()
@@ -252,6 +272,13 @@ export class TorrentService {
         numPeers: null
       })
 
+      // Add to active torrents array
+      this.connectingTorrents.push({
+        _id: download._id,
+        magnet,
+        resolve
+      })
+
       this.webTorrent.add(
         magnet.url,
         {
@@ -305,6 +332,9 @@ export class TorrentService {
         file,
         resolve
       })
+
+      // Now the torrent is added to the active torrents we can remove it from connecting
+      this.removeFromTorrents(download, true)
 
       let searchedSubs = false
       let lastUpdate = {
@@ -475,8 +505,12 @@ export class TorrentService {
   /**
    * Removes a download from torrents
    */
-  private removeFromTorrents(download: Model<Download>) {
-    this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+  private removeFromTorrents(download: Model<Download>, connectingOnly = false) {
+    this.connectingTorrents = this.connectingTorrents.filter(tor => tor._id !== download._id)
+
+    if (!connectingOnly) {
+      this.torrents = this.torrents.filter(tor => tor._id !== download._id)
+    }
   }
 
   /**
@@ -523,6 +557,15 @@ export class TorrentService {
    */
   public getTorrentForDownload(download: Download): TorrentInterface {
     return this.torrents.find(torrent => torrent._id === download._id)
+  }
+
+  /**
+   * Get's the connecting torrent for the download
+   *
+   * @param download
+   */
+  public getConnectingTorrentForDownload(download: Download): ConnectingTorrentInterface {
+    return this.connectingTorrents.find(torrent => torrent._id === download._id)
   }
 
   /**

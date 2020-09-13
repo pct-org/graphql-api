@@ -80,7 +80,7 @@ export class WatchController {
     }
 
     // Check if we have this item downloading atm
-    const torrent = this.torrentService.torrents.find(tor => tor._id === params._id)
+    const torrent = this.torrentService.getTorrentForDownload(params)
 
     const isChromeCast = req?.query?.device === 'chromecast' ?? false
 

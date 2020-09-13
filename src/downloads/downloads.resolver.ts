@@ -72,9 +72,9 @@ export class DownloadsResolver {
       }
     )
 
+    // Add the download to the queue
     this.torrentService.addDownload(download)
 
-    // Add the download to the queue
     if (type !== TorrentService.TYPE_STREAM) {
       // Start the queue
       this.torrentService.startDownloads()
