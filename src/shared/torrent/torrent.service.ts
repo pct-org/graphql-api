@@ -228,15 +228,18 @@ export class TorrentService {
 
       const item = await this.getItemForDownload(download)
 
-      const { torrents } = item
+      const { torrents, searchedTorrents } = item
 
       // Find the correct magnet
-      const magnet = torrents.find(torrent => torrent.quality === download.quality)
+      const magnet = (
+        // If it's null or default then use the normal scraped torrents
+        download.torrentType === 'scraped' || download.torrentType === null
+          ? torrents
+          : searchedTorrents
+      ).find(torrent => torrent.quality === download.quality)
 
       // Check if we have a magnet to be sure
       if (!magnet) {
-        // TODO:: Search for it?
-
         // No magnet found, update status to failed
         await this.updateOne(download, {
           status: TorrentService.STATUS_FAILED
@@ -515,6 +518,7 @@ export class TorrentService {
       if (down) {
         // Remove from array
         this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+        this.removeFromDownloads(download)
 
         this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
       }

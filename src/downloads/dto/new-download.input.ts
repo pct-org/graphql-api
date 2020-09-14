@@ -12,6 +12,9 @@ export class NewDownloadInput {
   @Field({ description: 'The item\'s of the download, episode or movie.' })
   itemType: string
 
+  @Field({ description: 'The type of torrent, default or searched.', defaultValue: 'scraped' })
+  torrentType: string
+
   @Field({ description: 'The quality to download.' })
   quality: string
 

@@ -7,6 +7,8 @@ import { Episode, Movie, Torrent } from '@pct-org/mongo-models'
  */
 export abstract class SearchAdapter {
 
+  public static TORRENT_TYPE = 'searched'
+
   constructor(
     protected readonly httpService: HttpService
   ) {

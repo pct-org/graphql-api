@@ -19,14 +19,16 @@ export class WatchOnTvResolver {
     @Args('command') command: string,
     @Args('_id') _id: string,
     @Args('quality') quality: string,
-    @Args('itemType') itemType: string
+    @Args('itemType') itemType: string,
+    @Args({ name: 'torrentType', nullable: true, type: () => String }) torrentType: string
   ): Promise<WatchOnTv> {
     await this.pubSubService.publish(WatchOnTvResolver.TRIGGER_TV, {
       [WatchOnTvResolver.TRIGGER_TV]: {
         command,
         _id,
         quality,
-        itemType
+        itemType,
+        torrentType
       }
     })
 
@@ -34,7 +36,8 @@ export class WatchOnTvResolver {
       command,
       _id,
       quality,
-      itemType
+      itemType,
+      torrentType
     }
   }
 

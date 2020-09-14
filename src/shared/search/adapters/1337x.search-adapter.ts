@@ -87,6 +87,7 @@ export class OneThreeThreeSevenXSearchAdapater extends SearchAdapter {
       size: parseBytes(data.size),
       sizeString: data.size,
       title: data.title,
+      type: SearchAdapter.TORRENT_TYPE,
       url: data.download.magnet
     }
   }
