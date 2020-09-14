@@ -524,10 +524,10 @@
     consola "^2.3.0"
     node-fetch "^2.3.0"
 
-"@pct-org/mongo-models@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-1.7.0.tgz#000922841a4c343149c69da0a338c365161ab358"
-  integrity sha512-Ompe6C01SiBvgykm6ScjvKLVZMlCcjIvgVybKTxQ/ENtji4b9AQk4kjmGyWlWWdyr56BsZDAlC6DYaBlOTh7hA==
+"@pct-org/mongo-models@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@pct-org/mongo-models/-/mongo-models-1.8.0.tgz#b679b168f45b7f06be7b979bb01aebc17ebfebf7"
+  integrity sha512-AyUhZHbK7+arMyu6lPmsM2P2ozHsbmGjco/epxvt5SE03Qy28AQmb8oPrFrM0oWl4GKE5HmUWExBJzttks+kmQ==
   dependencies:
     "@nestjs/common" "7.0.9"
     "@nestjs/core" "7.0.9"
