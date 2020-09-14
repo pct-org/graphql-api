@@ -137,8 +137,6 @@ export class TorrentService {
 
       // Destroy the torrent
       downloadingTorrent.torrent.destroy((err) => {
-        downloadingTorrent.resolve()
-
         if (err) {
           this.logger.error(`[${download._id}]: Error stopping download`, err.toString())
         }
@@ -148,6 +146,7 @@ export class TorrentService {
         // Remove the magnet from the client
         this.removeFromTorrents(download)
 
+        downloadingTorrent.resolve()
         resolve()
       })
     })
@@ -228,15 +227,18 @@ export class TorrentService {
 
       const item = await this.getItemForDownload(download)
 
-      const { torrents } = item
+      const { torrents, searchedTorrents } = item
 
       // Find the correct magnet
-      const magnet = torrents.find(torrent => torrent.quality === download.quality)
+      const magnet = (
+        // If it's null or default then use the normal scraped torrents
+        download.torrentType === 'scraped' || download.torrentType === null
+          ? torrents
+          : searchedTorrents
+      ).find(torrent => torrent.quality === download.quality)
 
       // Check if we have a magnet to be sure
       if (!magnet) {
-        // TODO:: Search for it?
-
         // No magnet found, update status to failed
         await this.updateOne(download, {
           status: TorrentService.STATUS_FAILED
@@ -349,11 +351,6 @@ export class TorrentService {
       torrent.on('noPeers', async (announceType) => {
         if (announceType === 'dht') {
           this.logger.warn(`[${download._id}]: No peers found`)
-          // No peers found, update status to failed
-          await this.updateOne(download, {
-            status: TorrentService.STATUS_FAILED
-          })
-
           await this.updateOne(item, {
             download: {
               downloadStatus: TorrentService.STATUS_FAILED,
@@ -433,9 +430,8 @@ export class TorrentService {
 
         // Remove from torrents
         this.removeFromTorrents(download)
-
         // Remove from the queue as the item is downloaded
-        this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+        this.removeFromDownloads(download)
 
         await this.updateOne(download, {
           progress: 100,
@@ -511,23 +507,27 @@ export class TorrentService {
    * Cleans up a download
    */
   public cleanUpDownload(download: Model<Download>) {
-    // Delete the download
-    download.delete()
+    return new Promise(async (resolve) => {
+      // Delete the download
+      await download.delete()
 
-    const down = this.downloads.find(findDown => findDown._id === download._id)
+      const down = this.downloads.find(findDown => findDown._id === download._id)
 
-    if (down) {
-      // Remove from array
-      this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+      if (down) {
+        // Remove from array
+        this.removeFromDownloads(download)
 
-      this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
-    }
-
-    // Remove the download folder
-    rimraf(this.getDownloadLocation(download), (error) => {
-      if (error) {
-        this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+        this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
       }
+
+      // Remove the download folder
+      rimraf(this.getDownloadLocation(download), (error) => {
+        if (error) {
+          this.logger.error(`[${download._id}]: Error cleaning up`, error.toString())
+        }
+
+        resolve()
+      })
     })
   }
 
@@ -582,4 +582,12 @@ export class TorrentService {
       this.logger.error('Error while trying to remove magnet from web torrent!', err)
     }
   }
+
+  /**
+   * Removes a downlaod from the downloads
+   */
+  private removeFromDownloads(download: Download) {
+    this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+  }
+
 }

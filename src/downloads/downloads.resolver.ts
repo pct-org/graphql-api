@@ -42,20 +42,26 @@ export class DownloadsResolver {
     @Args('_id') _id: string,
     @Args('itemType') itemType: string,
     @Args('quality') quality: string,
-    @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string
+    @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string,
+    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string,
   ): Promise<Download> {
-    const downloadExists = await this.downloadsService.findOne({
-      _id
-    })
+    const downloadExists = await this.download({ _id })
 
     if (downloadExists) {
-      return downloadExists
+      // If the download exists but has status failed then remove everything so we can retry
+      if (downloadExists.status === TorrentService.STATUS_FAILED) {
+        await this.torrentService.cleanUpDownload(downloadExists)
+
+      } else {
+        return downloadExists
+      }
     }
 
     const download = await this.downloadsService.addOne({
       _id,
       type,
       itemType,
+      torrentType,
       quality
     })
 
@@ -94,11 +100,10 @@ export class DownloadsResolver {
       // Only cleanup and update if the stop type is the same as the start type
       if (type === download.type) {
         await this.torrentService.stopDownloading(download)
+        await this.torrentService.cleanUpDownload(download)
 
         // Start the other queued items
         this.torrentService.startDownloads()
-
-        await this.torrentService.cleanUpDownload(download)
 
         const item = await this.torrentService.getItemForDownload(download)
 
@@ -129,12 +134,19 @@ export class DownloadsResolver {
   async startStream(
     @Args('_id') _id: string,
     @Args('itemType') itemType: string,
-    @Args('quality') quality: string
+    @Args('quality') quality: string,
+    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string,
   ): Promise<Download> {
     let download = await this.download({ _id })
 
-    if (!download) {
-      download = await this.startDownload(_id, itemType, quality, TorrentService.TYPE_STREAM)
+    if (!download || download.status === TorrentService.STATUS_FAILED) {
+      download = await this.startDownload(
+        _id,
+        itemType,
+        quality,
+        TorrentService.TYPE_STREAM,
+        torrentType,
+      )
     }
 
     // Check if the download is not complete or downloading

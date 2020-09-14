@@ -139,6 +139,7 @@ export class RarbgSearchAdapter extends SearchAdapter {
       size: torrent.size,
       sizeString: this.getStringSize(torrent.size),
       title: torrent.title,
+      type: SearchAdapter.TORRENT_TYPE,
       url: torrent.download
     }
   }

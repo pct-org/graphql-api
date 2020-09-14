@@ -17,7 +17,8 @@ export class OneThreeThreeSevenXSearchAdapater extends SearchAdapter {
   private readonly trustedUploaders = [
     'ETTV',
     'EtHD',
-    'MkvCage'
+    'MkvCage',
+    'mazemaze16'
   ]
   /**
    * Search for a episode
@@ -87,6 +88,7 @@ export class OneThreeThreeSevenXSearchAdapater extends SearchAdapter {
       size: parseBytes(data.size),
       sizeString: data.size,
       title: data.title,
+      type: SearchAdapter.TORRENT_TYPE,
       url: data.download.magnet
     }
   }

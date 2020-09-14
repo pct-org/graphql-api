@@ -71,6 +71,7 @@ export class DownloadsService {
    */
   getAllEpisodes(): Promise<Download[]> {
     return this.downloadModel.find({
+      // TODO:: Constants?
       itemType: 'episode'
     })
   }
