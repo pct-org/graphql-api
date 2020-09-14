@@ -28,7 +28,7 @@ export class SubtitlesService {
       this.client = new OpenSubtitles({
         useragent: 'Popcorn Time',
         username,
-        password,
+        password
       })
 
     } else {
@@ -70,7 +70,7 @@ export class SubtitlesService {
       const subtitles = await this.client.search({
         sublanguageid: 'all',
         filesize: torrent.length,
-        path: `${location}/${filename}`,
+        path: `${location}/${torrent.path}`,
         imdbid,
         filename,
         season,
@@ -115,6 +115,7 @@ export class SubtitlesService {
     } catch (e) {
       if (e.message.includes('no such file or directory') && retry) {
         this.searchForSubtitles(download, torrent, false)
+
       } else {
         this.logger.error(`[${download._id}]: Could not search for subtitles`, e)
       }
