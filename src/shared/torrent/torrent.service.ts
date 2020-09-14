@@ -137,8 +137,6 @@ export class TorrentService {
 
       // Destroy the torrent
       downloadingTorrent.torrent.destroy((err) => {
-        downloadingTorrent.resolve()
-
         if (err) {
           this.logger.error(`[${download._id}]: Error stopping download`, err.toString())
         }
@@ -148,6 +146,7 @@ export class TorrentService {
         // Remove the magnet from the client
         this.removeFromTorrents(download)
 
+        downloadingTorrent.resolve()
         resolve()
       })
     })
@@ -431,9 +430,8 @@ export class TorrentService {
 
         // Remove from torrents
         this.removeFromTorrents(download)
-
         // Remove from the queue as the item is downloaded
-        this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+        this.removeFromDownloads(download)
 
         await this.updateOne(download, {
           progress: 100,
@@ -517,7 +515,6 @@ export class TorrentService {
 
       if (down) {
         // Remove from array
-        this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
         this.removeFromDownloads(download)
 
         this.logger.log(`[${download._id}]: Removed from queue, new size: ${this.downloads.length}`)
@@ -585,4 +582,12 @@ export class TorrentService {
       this.logger.error('Error while trying to remove magnet from web torrent!', err)
     }
   }
+
+  /**
+   * Removes a downlaod from the downloads
+   */
+  private removeFromDownloads(download: Download) {
+    this.downloads = this.downloads.filter(filterDown => filterDown._id !== download._id)
+  }
+
 }

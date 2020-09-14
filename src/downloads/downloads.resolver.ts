@@ -139,9 +139,14 @@ export class DownloadsResolver {
   ): Promise<Download> {
     let download = await this.download({ _id })
 
-    if (!download) {
-      download = await this.startDownload(_id, itemType, quality, TorrentService.TYPE_STREAM)
+    if (!download || download.status === TorrentService.STATUS_FAILED) {
+      download = await this.startDownload(
+        _id,
+        itemType,
+        quality,
+        TorrentService.TYPE_STREAM,
         torrentType,
+      )
     }
 
     // Check if the download is not complete or downloading
