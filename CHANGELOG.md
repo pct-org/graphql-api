@@ -1,3 +1,12 @@
+## [0.16.1](https://github.com/pct-org/graphql-api/compare/v0.16.0...v0.16.1) (2020-09-14)
+
+
+### Bug Fixes
+
+* Update mongo models that contain a fix ([416ef54](https://github.com/pct-org/graphql-api/commit/416ef54c82ef6c7179a7d93d5eb27fcb5b5f0250))
+
+
+
 # [0.16.0](https://github.com/pct-org/graphql-api/compare/v0.15.0...v0.16.0) (2020-09-14)
 
 
@@ -49,15 +58,6 @@
 ### Features
 
 * Added watch on tv modules ([15f66de](https://github.com/pct-org/graphql-api/commit/15f66dee20190f9111fb395204970b5993a932fe))
-
-
-
-## [0.12.1](https://github.com/pct-org/graphql-api/compare/v0.12.0...v0.12.1) (2020-08-24)
-
-
-### Bug Fixes
-
-* Fixed that seasons and episodes with no aired date where returned ([c911507](https://github.com/pct-org/graphql-api/commit/c9115077871398380503f435421b3f6f885efde2))
 
 
 
