@@ -1,3 +1,20 @@
+# [0.16.0](https://github.com/pct-org/graphql-api/compare/v0.15.0...v0.16.0) (2020-09-14)
+
+
+### Bug Fixes
+
+* Fix that file for subs was not found ([48333a9](https://github.com/pct-org/graphql-api/commit/48333a9e27e119d0476e818183982e33d5355e93))
+* Fixes for failed downloads ([11fa07f](https://github.com/pct-org/graphql-api/commit/11fa07ff843c18562c6a2a77fac2fba2fee71e6e))
+* Fixes that searchedTorrents was not used ([d52d831](https://github.com/pct-org/graphql-api/commit/d52d831231b3220149690483f85baa4dcefa7405))
+* If download had status failed remove it on retry ([144a7f9](https://github.com/pct-org/graphql-api/commit/144a7f9b1cf413fb0acaba7e3eef98cc6343456d))
+
+
+### Features
+
+* **1337x:** Added other trusted uploader ([37ce8f9](https://github.com/pct-org/graphql-api/commit/37ce8f9cbb6c5c4e46e0d62d2875f94ae5cc7e86))
+
+
+
 # [0.15.0](https://github.com/pct-org/graphql-api/compare/v0.14.0...v0.15.0) (2020-09-13)
 
 
@@ -41,15 +58,6 @@
 ### Bug Fixes
 
 * Fixed that seasons and episodes with no aired date where returned ([c911507](https://github.com/pct-org/graphql-api/commit/c9115077871398380503f435421b3f6f885efde2))
-
-
-
-# [0.12.0](https://github.com/pct-org/graphql-api/compare/v0.11.0...v0.12.0) (2020-07-19)
-
-
-### Features
-
-* Use the size of the download when watching ([21d1b39](https://github.com/pct-org/graphql-api/commit/21d1b39f65db6da8da0dd2ff2064c2d0ce9fcd96))
 
 
 
