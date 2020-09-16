@@ -6,7 +6,6 @@ import { Show, Download } from '@pct-org/mongo-models'
 import { ContentService } from '../shared/content/content.service'
 
 import { ShowsArgs } from './dto/shows.args'
-import { ShowArgs } from './dto/show.args'
 
 @Injectable()
 export class ShowsService extends ContentService {
@@ -17,21 +16,35 @@ export class ShowsService extends ContentService {
     super()
   }
 
-  findOne(showArgs: ShowArgs): Promise<Show> {
+  findOne(id: string, lean = true): Promise<Show> {
     return this.showModel.findById(
-      showArgs._id,
+      id,
       {},
       {
-        lean: true
+        lean
       }
     )
   }
 
-  findAll(contentArgs: ShowsArgs): Promise<Show[]> {
+  findAll(contentArgs: ShowsArgs, lean = true): Promise<Show[]> {
     return this.showModel.find(
       this.getQuery(contentArgs),
       {},
-      this.getOptions(contentArgs)
+      this.getOptions(contentArgs, lean)
+    )
+  }
+
+  findAllWithIDS(ids: string[], lean = true): Promise<Show[]> {
+    return this.showModel.find(
+      {
+        _id: {
+          $in: ids
+        }
+      },
+      {},
+      {
+        lean
+      }
     )
   }
 
