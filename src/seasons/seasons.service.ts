@@ -11,10 +11,10 @@ export class SeasonsService {
     @InjectModel('Seasons') private readonly seasonModel: Model<Season>
   ) {}
 
-  findAllForShow(_id: string): Promise<Season[]> {
+  findAllForShow(id: string, lean = true): Promise<Season[]> {
     return this.seasonModel.find(
       {
-        showImdbId: _id,
+        showImdbId: id,
         firstAired: {
           $gt: 0
         }
@@ -26,16 +26,14 @@ export class SeasonsService {
         sort: {
           number: 0 // Sort on season number
         },
-        lean: true
+        lean
       }
     )
   }
 
-  findOne(_id: string): Promise<Season[]> {
-    return this.seasonModel.findOne(
-      {
-        _id
-      },
+  findOne(id: string, lean = true): Promise<Season[]> {
+    return this.seasonModel.findById(
+      id,
       {},
       {
         // skip: showsArgs.offset,
@@ -43,7 +41,7 @@ export class SeasonsService {
         sort: {
           number: 0 // Sort on season number
         },
-        lean: true
+        lean
       }
     )
   }

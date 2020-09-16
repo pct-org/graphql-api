@@ -16,7 +16,7 @@ export class EpisodesService {
    * Returns all the episodes for the user that he did not watch
    * from shows he bookmarked
    */
-  async findMyEpisodes(bookmarksService: BookmarksService): Promise<Episode[]> {
+  async findMyEpisodes(bookmarksService: BookmarksService, lean = true): Promise<Episode[]> {
     const shows = await bookmarksService.findAllShows({
       offset: 0,
       limit: 1000,
@@ -39,16 +39,23 @@ export class EpisodesService {
       {
         sort: {
           firstAired: -1
-        }
+        },
+        lean
       }
     )
   }
 
-  findOne(_id: string): Promise<Episode> {
-    return this.episodeModel.findById(_id)
+  findOne(id: string, lean = true): Promise<Episode> {
+    return this.episodeModel.findById(
+      id,
+      {},
+      {
+        lean
+      }
+    )
   }
 
-  findAllForSeason(imdbId: string, seasonNumber: number): Promise<Episode[]> {
+  findAllForSeason(imdbId: string, seasonNumber: number, lean = true): Promise<Episode[]> {
     return this.episodeModel.find(
       {
         showImdbId: imdbId,
@@ -64,12 +71,12 @@ export class EpisodesService {
         sort: {
           number: 0 // Sort on episode number
         },
-        lean: true
+        lean
       }
     )
   }
 
-  findAllWithIDS(ids: string[]): Promise<Episode[]> {
+  findAllWithIDS(ids: string[], lean = true): Promise<Episode[]> {
     return this.episodeModel.find(
       {
         _id: {
@@ -83,12 +90,12 @@ export class EpisodesService {
         sort: {
           number: 0 // Sort on episode number
         },
-        lean: true
+        lean
       }
     )
   }
 
-  findForCalendar(showImdbId): Promise<Episode[]> {
+  findForCalendar(showImdbId, lean = true): Promise<Episode[]> {
     const fourteenDaysAgo = new Date(new Date().getTime() - (14 * 24 * 60 * 60 * 1000)).getTime()
 
     return this.episodeModel.find(
@@ -103,7 +110,7 @@ export class EpisodesService {
         sort: {
           number: 0 // Sort on episode number
         },
-        lean: true
+        lean
       }
     )
   }

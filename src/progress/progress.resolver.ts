@@ -31,15 +31,15 @@ export class ProgressResolver {
   async progress(
     @Args('_id') _id: string,
     @Args('type') type: string,
-    @Args('progress') progress: number,
+    @Args('progress') progress: number
   ): Promise<Movie | Episode> {
     let item = null
 
     if (type === 'movie') {
-      item = await this.moviesService.findOne({ _id }, false)
+      item = await this.moviesService.findOne(_id, false)
 
     } else if (type === 'episode') {
-      item = await this.episodesService.findOne(_id)
+      item = await this.episodesService.findOne(_id, false)
     }
 
     if (item) {

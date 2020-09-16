@@ -31,11 +31,15 @@ export class DownloadsService {
   }
 
   /**
-   * Find one download
+   * Find one download, for downloads lean is false as there is a bigger change we are going to edit it
    */
-  findOne(downloadArgs: DownloadArgs): Promise<Download> {
+  findOne(id: string, lean = false): Promise<Download> {
     return this.downloadModel.findById(
-      downloadArgs._id
+      id,
+      {},
+      {
+        lean
+      }
     )
   }
 
