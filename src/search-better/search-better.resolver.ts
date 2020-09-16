@@ -21,7 +21,7 @@ export class SearchBetterResolver {
     const episode = await this.episodesService.findOne(_id)
 
     // Set the show so we can properly build the search query
-    episode.show = await this.showsService.findOne({ _id: episode.showImdbId })
+    episode.show = await this.showsService.findOne(episode.showImdbId)
 
     // Add the searched torrents
     episode.searchedTorrents = await this.searchService.searchEpisode(episode)
@@ -32,7 +32,7 @@ export class SearchBetterResolver {
 
   @Mutation(type => Movie, { description: 'Search for better qualities.' })
   async getBetterQualitiesForMovie(@Args('_id') _id: string): Promise<Movie> {
-    const movie = await this.moviesService.findOne({ _id })
+    const movie = await this.moviesService.findOne(_id)
 
     // Add the searched torrents
     movie.searchedTorrents = await this.searchService.searchMovie(movie)

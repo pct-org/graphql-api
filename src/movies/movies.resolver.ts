@@ -13,7 +13,7 @@ export class MoviesResolver {
 
   @Query(returns => Movie)
   movie(@Args() movieArgs: MovieArgs): Promise<Movie> {
-    return this.moviesService.findOne(movieArgs)
+    return this.moviesService.findOne(movieArgs._id)
   }
 
   @Query(returns => [Movie])

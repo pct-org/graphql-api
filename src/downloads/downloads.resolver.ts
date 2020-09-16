@@ -27,7 +27,7 @@ export class DownloadsResolver {
 
   @Query(returns => Download, { description: 'Get one download.' })
   download(@Args() downloadArgs: DownloadArgs): Promise<Download> {
-    return this.downloadsService.findOne(downloadArgs)
+    return this.downloadsService.findOne(downloadArgs._id)
   }
 
   @Query(returns => [Download], { description: 'Get all active/queued downloads.' })
@@ -43,7 +43,7 @@ export class DownloadsResolver {
     @Args('itemType') itemType: string,
     @Args('quality') quality: string,
     @Args({ name: 'type', defaultValue: TorrentService.TYPE_DOWNLOAD, type: () => String }) type: string,
-    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string,
+    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string
   ): Promise<Download> {
     const downloadExists = await this.download({ _id })
 
@@ -135,7 +135,7 @@ export class DownloadsResolver {
     @Args('_id') _id: string,
     @Args('itemType') itemType: string,
     @Args('quality') quality: string,
-    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string,
+    @Args({ name: 'torrentType', defaultValue: 'scraped', type: () => String }) torrentType: string
   ): Promise<Download> {
     let download = await this.download({ _id })
 
@@ -145,7 +145,7 @@ export class DownloadsResolver {
         itemType,
         quality,
         TorrentService.TYPE_STREAM,
-        torrentType,
+        torrentType
       )
     }
 
@@ -175,7 +175,7 @@ export class DownloadsResolver {
       return null
     }
 
-    return this.moviesService.findOne({ _id: download._id })
+    return this.moviesService.findOne(download._id)
   }
 
   /**

@@ -2,11 +2,12 @@ import { ContentsArgs } from './dto/contents.args'
 
 export abstract class ContentService {
 
-  protected getOptions(contentArgs: ContentsArgs): object {
+  protected getOptions(contentArgs: ContentsArgs, lean = true): object {
     return {
       skip: contentArgs.offset,
       limit: contentArgs.limit,
-      sort: this.getSorting(contentArgs)
+      sort: this.getSorting(contentArgs),
+      lean
     }
   }
 

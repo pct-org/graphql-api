@@ -20,27 +20,31 @@ export class BookmarksService {
     const shows = await this.findAllShows(bookmarksArgs)
 
     // Return all bookmarks at once
-    return [...movies, ...shows]
-      .sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
-      // .slice(bookmarksArgs.offset, bookmarksArgs.offset + bookmarksArgs.limit)
+    return [
+      ...movies,
+      ...shows
+    ].sort((itemA, itemB) => itemB.bookmarkedOn - itemA.bookmarkedOn)
+    // .slice(bookmarksArgs.offset, bookmarksArgs.offset + bookmarksArgs.limit)
   }
 
   async findAllMovies(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
-    const movies = []
-    for await (const movie of this.movieModel.find(this.getQuery(bookmarksArgs))) {
-      movies.push(movie)
-    }
-
-    return movies
+    return this.movieModel.find(
+      this.getQuery(bookmarksArgs),
+      {},
+      {
+        lean: true
+      }
+    )
   }
 
   async findAllShows(bookmarksArgs: BookmarksArgs): Promise<Content[]> {
-    const shows = []
-    for await (const movie of this.showModel.find(this.getQuery(bookmarksArgs))) {
-      shows.push(movie)
-    }
-
-    return shows
+    return this.showModel.find(
+      this.getQuery(bookmarksArgs),
+      {},
+      {
+        lean: true
+      }
+    )
   }
 
   /**
@@ -50,7 +54,6 @@ export class BookmarksService {
    */
   async updateBookmark(addBookmarksArgs: NewBookmarkInput, add): Promise<Content> {
     return await (
-
       addBookmarksArgs.type === 'movie'
         ? this.movieModel
         : this.showModel

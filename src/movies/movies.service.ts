@@ -16,21 +16,21 @@ export class MoviesService extends ContentService {
     super()
   }
 
-  findOne(movieArgs: MovieArgs, lean: boolean = false): Promise<Movie> {
+  findOne(id: string, lean = true): Promise<Movie> {
     return this.movieModel.findById(
-      movieArgs._id,
+      id,
       {},
       {
-        lean: false
+        lean
       }
     )
   }
 
-  findAll(moviesArgs: MoviesArgs): Promise<Movie[]> {
+  findAll(moviesArgs: MoviesArgs, lean = true): Promise<Movie[]> {
     return this.movieModel.find(
       this.getQuery(moviesArgs),
       {},
-      this.getOptions(moviesArgs)
+      this.getOptions(moviesArgs, lean)
     )
   }
 
@@ -40,8 +40,8 @@ export class MoviesService extends ContentService {
       },
       movie,
       {
-        new: true,
-      },
+        new: true
+      }
     )
   }
 

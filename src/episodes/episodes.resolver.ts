@@ -28,9 +28,7 @@ export class EpisodesResolver {
 
   @ResolveField(type => Show)
   show(@Parent() episode: Episode): Promise<Show> {
-    return this.showsService.findOne({
-      _id: episode.showImdbId
-    })
+    return this.showsService.findOne(episode.showImdbId)
   }
 
 }
