@@ -1,3 +1,12 @@
+## [0.17.1](https://github.com/pct-org/graphql-api/compare/v0.17.0...v0.17.1) (2020-09-16)
+
+
+### Bug Fixes
+
+* Fixed when trying to remove a connecting download it never resolved ([b87d28e](https://github.com/pct-org/graphql-api/commit/b87d28e3245b4e13ce0750a6571979da8e827aab))
+
+
+
 # [0.17.0](https://github.com/pct-org/graphql-api/compare/v0.16.1...v0.17.0) (2020-09-16)
 
 
@@ -49,20 +58,6 @@
 ### Features
 
 * Added 1337x search provider ([4831fcf](https://github.com/pct-org/graphql-api/commit/4831fcf0a2133fb119618d6084bc816c58d9abc2))
-
-
-
-# [0.14.0](https://github.com/pct-org/graphql-api/compare/v0.13.0...v0.14.0) (2020-09-13)
-
-
-### Bug Fixes
-
-* Catch if webtorrent.remove throws error ([d0512c6](https://github.com/pct-org/graphql-api/commit/d0512c6a328f612e15d3cbd662b27d677f31c205))
-
-
-### Features
-
-* Added search for better ([2f0c3b0](https://github.com/pct-org/graphql-api/commit/2f0c3b0d0b72ba7844234238d62f9476825e1a4c))
 
 
 
