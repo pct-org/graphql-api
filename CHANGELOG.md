@@ -1,3 +1,17 @@
+# [0.17.0](https://github.com/pct-org/graphql-api/compare/v0.16.1...v0.17.0) (2020-09-16)
+
+
+### Features
+
+* Added most weekly most watched shows from Trakt ([c494eff](https://github.com/pct-org/graphql-api/commit/c494eff8d838d54a13dd3ecd9f4da066f52423d0))
+
+
+### Performance Improvements
+
+* Align all findOne / find and enable lean by default ([89fb57a](https://github.com/pct-org/graphql-api/commit/89fb57ab5531aed3cb438f018c5e2db85876d992))
+
+
+
 ## [0.16.1](https://github.com/pct-org/graphql-api/compare/v0.16.0...v0.16.1) (2020-09-14)
 
 
@@ -49,15 +63,6 @@
 ### Features
 
 * Added search for better ([2f0c3b0](https://github.com/pct-org/graphql-api/commit/2f0c3b0d0b72ba7844234238d62f9476825e1a4c))
-
-
-
-# [0.13.0](https://github.com/pct-org/graphql-api/compare/v0.12.1...v0.13.0) (2020-09-04)
-
-
-### Features
-
-* Added watch on tv modules ([15f66de](https://github.com/pct-org/graphql-api/commit/15f66dee20190f9111fb395204970b5993a932fe))
 
 
 
