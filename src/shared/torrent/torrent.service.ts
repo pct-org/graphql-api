@@ -126,7 +126,9 @@ export class TorrentService {
 
         this.removeFromTorrents(download)
 
-        return connectingTorrent.resolve()
+        connectingTorrent.resolve()
+
+        return resolve()
       }
 
       if (!downloadingTorrent) {
