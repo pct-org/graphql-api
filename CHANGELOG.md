@@ -1,3 +1,12 @@
+# [0.18.0](https://github.com/pct-org/graphql-api/compare/v0.17.1...v0.18.0) (2020-09-20)
+
+
+### Features
+
+* Improvements for webtorrent setup ([6c887bc](https://github.com/pct-org/graphql-api/commit/6c887bcfcd416cb267d5d215a60f123f2bd84042))
+
+
+
 ## [0.17.1](https://github.com/pct-org/graphql-api/compare/v0.17.0...v0.17.1) (2020-09-16)
 
 
@@ -44,20 +53,6 @@
 ### Features
 
 * **1337x:** Added other trusted uploader ([37ce8f9](https://github.com/pct-org/graphql-api/commit/37ce8f9cbb6c5c4e46e0d62d2875f94ae5cc7e86))
-
-
-
-# [0.15.0](https://github.com/pct-org/graphql-api/compare/v0.14.0...v0.15.0) (2020-09-13)
-
-
-### Bug Fixes
-
-* Couple of fixes ([d587194](https://github.com/pct-org/graphql-api/commit/d58719480d3f48a0d428cbd0b6cae0b2f135a321))
-
-
-### Features
-
-* Added 1337x search provider ([4831fcf](https://github.com/pct-org/graphql-api/commit/4831fcf0a2133fb119618d6084bc816c58d9abc2))
 
 
 
